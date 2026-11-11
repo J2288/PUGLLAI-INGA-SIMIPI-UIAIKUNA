@@ -429,18 +429,21 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   CADENA DE FICHAS EN LA MESA
+   CADENA DE FICHAS EN LA MESA CON AUTO-AJUSTE DINÁMICO
    -------------------------------------------------------------------------- */
 .chain-scroll-container {
   min-height: 190px;
   display: flex;
   align-items: center;
+  justify-content: center;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 22px 10px;
   scrollbar-width: thin;
   scrollbar-color: var(--sun) rgba(0,0,0,0.3);
   z-index: 2;
+  width: 100%;
+  position: relative;
 }
 
 .chain {
@@ -449,6 +452,11 @@ body {
   gap: 6px;
   margin: 0 auto;
   padding: 0 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transform-origin: center center;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
 }
 
 /* Zonas de soltado / botones de conexión en los extremos */
@@ -648,29 +656,25 @@ body {
   z-index: 10;
 }
 
-.tile.playable {
-  border-color: #2ed573;
-  box-shadow: 0 0 14px rgba(46, 213, 115, 0.8);
+/* Animación de Ficha Incorrecta (Intento Fallido con sacudida y alerta) */
+@keyframes tile-error-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  15%, 45%, 75% {
+    transform: translateX(-7px) rotate(-1.5deg);
+    border-color: #EF4444 !important;
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.85), 0 4px 14px rgba(0,0,0,0.45) !important;
+  }
+  30%, 60%, 90% {
+    transform: translateX(7px) rotate(1.5deg);
+    border-color: #EF4444 !important;
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.85), 0 4px 14px rgba(0,0,0,0.45) !important;
+  }
 }
 
-.tile.playable::before {
-  content: "★";
-  position: absolute;
-  top: -7px;
-  right: -7px;
-  background: linear-gradient(135deg, #FFC629 0%, #FF9900 100%);
-  color: #3B0F1E;
-  font-size: 11px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #FFF;
-  font-weight: 900;
-  z-index: 6;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+.tile-error-shake {
+  animation: tile-error-shake 0.45s ease-in-out !important;
 }
 
 .tile.selected {
@@ -1814,21 +1818,11 @@ button, .button, .tile, .topbar-btn, .nav-tab, .mode-card-btn {
   }
 }
 
-/* Animación de Fichas Jugables */
-.tile.playable {
-  border-color: #2ed573 !important;
-  box-shadow: 0 0 14px rgba(46, 213, 115, 0.8) !important;
-  animation: tile-playable-glow 2s infinite ease-in-out;
-}
-@keyframes tile-playable-glow {
-  0%, 100% {
-    transform: translateY(0);
-    box-shadow: 0 0 10px rgba(46, 213, 115, 0.6);
-  }
-  50% {
-    transform: translateY(-4px);
-    box-shadow: 0 0 22px rgba(46, 213, 115, 1);
-  }
+/* Resaltado de ficha seleccionada en mesa */
+.tile.selected {
+  transform: translateY(-12px) scale(1.06) !important;
+  border-color: var(--sun) !important;
+  box-shadow: 0 16px 32px rgba(0,0,0,0.5), 0 0 20px rgba(255, 198, 41, 0.95) !important;
 }
 
 /* MODAL DE VICTORIA / FIN DE PARTIDA PREMIUM */

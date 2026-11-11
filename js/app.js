@@ -115,45 +115,84 @@ function playSound(type) {
     const now = ctx.currentTime;
 
     if (type === 'correct') {
+      // 1. Golpe seco y nítido de ficha de dominó
       playDominoClack();
-      // Armónico sutil de logro
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, now); // D5
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.18); // A5
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.25);
-    } else if (type === 'draw') {
-      // Ficha arrastrada
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(320, now);
-      osc.frequency.exponentialRampToValueAtTime(520, now + 0.1);
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.12);
+
+      // 2. Acorde triunfal brillante de acierto pedagógico (F5 -> A5 -> C6)
+      const successNotes = [
+        { freq: 698.46, delay: 0.03, dur: 0.16, gain: 0.22 },
+        { freq: 880.00, delay: 0.10, dur: 0.20, gain: 0.25 },
+        { freq: 1046.50, delay: 0.18, dur: 0.35, gain: 0.28 }
+      ];
+
+      successNotes.forEach(n => {
+        const osc = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(n.freq, now + n.delay);
+
+        gainNode.gain.setValueAtTime(0.001, now + n.delay);
+        gainNode.gain.linearRampToValueAtTime(n.gain, now + n.delay + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + n.delay + n.dur);
+
+        osc.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        osc.start(now + n.delay);
+        osc.stop(now + n.delay + n.dur);
+      });
     } else if (type === 'error') {
+      // Zumbador pedagógico de respuesta incorrecta / fallida ("Uh-oh")
+      const beeps = [
+        { freq: 240, start: 0.00, dur: 0.12, endFreq: 190, gain: 0.30 },
+        { freq: 175, start: 0.13, dur: 0.22, endFreq: 115, gain: 0.32 }
+      ];
+
+      beeps.forEach(b => {
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc1.type = 'sawtooth';
+        osc2.type = 'triangle';
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(450, now + b.start);
+
+        osc1.frequency.setValueAtTime(b.freq, now + b.start);
+        osc1.frequency.exponentialRampToValueAtTime(b.endFreq, now + b.start + b.dur);
+
+        osc2.frequency.setValueAtTime(b.freq * 0.98, now + b.start);
+        osc2.frequency.exponentialRampToValueAtTime(b.endFreq * 0.98, now + b.start + b.dur);
+
+        gainNode.gain.setValueAtTime(0.001, now + b.start);
+        gainNode.gain.linearRampToValueAtTime(b.gain, now + b.start + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + b.start + b.dur);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        osc1.start(now + b.start);
+        osc2.start(now + b.start);
+        osc1.stop(now + b.start + b.dur);
+        osc2.stop(now + b.start + b.dur);
+      });
+    } else if (type === 'select') {
+      // Clic sutil de selección de ficha
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(280, now);
-      osc.frequency.exponentialRampToValueAtTime(180, now + 0.2);
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(660, now + 0.07);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.2);
-    } else if (type === 'win') {
+      osc.stop(now + 0.08);
+    } else if (type === 'draw') {
       [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
         const o = ctx.createOscillator();
         const g = ctx.createGain();
@@ -538,7 +577,7 @@ function onHandTileClick(index) {
   const tile = hand[index];
   if (!tile) return;
 
-  // Si la mesa está vacía, colocar la ficha inmediatamente en el centro
+  // Si la mesa está vacía, colocar la ficha inmediatamente en el centro (primer acierto)
   if (chain.length === 0) {
     chain.push(tile);
     onSuccessfulMove(index, tile);
@@ -551,28 +590,43 @@ function onHandTileClick(index) {
   const canRight = canConnect(tile, rightEnd);
 
   if (!canLeft && !canRight) {
-    // No coincide
+    // ❌ RESPUESTA FALLIDA / INTENTO INCORRECTO
     streak = 0;
     if ($("streakCount")) $("streakCount").textContent = '0';
-    playSound('error');
-    $("status").textContent = `No coincide. "${tile.left.inga}" significa "${tile.left.es}". ¡Busca una ficha que coincida con ${leftEnd.inga} o ${rightEnd.inga}!`;
-    $("status").className = "alert";
+    playSound('error'); // Sonido fallido pedagógico ("Uh-oh")
+
+    // Sacudida visual roja en la ficha del atril que se intentó mover
+    const handContainer = $("hand");
+    if (handContainer && handContainer.children[index]) {
+      const tileEl = handContainer.children[index];
+      tileEl.classList.remove('tile-error-shake');
+      void tileEl.offsetWidth; // Reflow
+      tileEl.classList.add('tile-error-shake');
+    }
+
+    if ($("status")) {
+      $("status").textContent = `❌ ¡Ficha incorrecta! "${tile.left.inga}" (${tile.left.es}) no coincide con los extremos [${leftEnd.inga}] ni [${rightEnd.inga}]. ¡Piensa y elige otra ficha!`;
+      $("status").className = "alert";
+    }
+
     updateLearnCard(tile.left);
     selectedTileIndex = null;
-    render();
     return;
   }
 
-  // Si coincide con ambos extremos, marcar la ficha como seleccionada y permitir elegir el lado
+  // ✅ RESPUESTA CORRECTA: Coincide con ambos extremos (el jugador elige el lado)
   if (canLeft && canRight) {
     selectedTileIndex = index;
-    $("status").textContent = `Ficha elegida: [${tile.left.inga} | ${tile.right.inga}]. Haz clic en el extremo donde deseas conectarla.`;
-    $("status").className = "";
+    playSound('select');
+    if ($("status")) {
+      $("status").textContent = `¡Ficha acertada! [${tile.left.inga} | ${tile.right.inga}] coincide con ambos lados. Haz clic en el botón del extremo ◀ o ▶ en la mesa.`;
+      $("status").className = "";
+    }
     render();
     return;
   }
 
-  // Si coincide únicamente con uno, jugarla directamente en ese extremo
+  // ✅ RESPUESTA CORRECTA: Coincide únicamente con un extremo (se juega directamente)
   if (canRight) {
     playTileAtEnd(index, 'rightEnd');
   } else {
@@ -591,12 +645,18 @@ function playTileAtEnd(index, end) {
 
   if (end === 'rightEnd') {
     const rightEnd = chain[chain.length - 1].right;
-    if (!canConnect(tile, rightEnd)) return;
+    if (!canConnect(tile, rightEnd)) {
+      playSound('error');
+      return;
+    }
     const oriented = orientTile(tile, rightEnd, 'rightEnd');
     chain.push(oriented);
   } else {
     const leftEnd = chain[0].left;
-    if (!canConnect(tile, leftEnd)) return;
+    if (!canConnect(tile, leftEnd)) {
+      playSound('error');
+      return;
+    }
     const oriented = orientTile(tile, leftEnd, 'leftEnd');
     chain.unshift(oriented);
   }
@@ -806,7 +866,7 @@ function render() {
     });
   }
 
-  // Fichas jugables en la mano
+  // Fichas jugables en la mano (para control de reglas y paso de turno)
   const playableMoves = getPlayableTiles(hand, chain);
 
   // Actualizar atril del jugador
@@ -815,12 +875,9 @@ function render() {
     handContainer.replaceChildren();
 
     hand.forEach((tile, index) => {
-      const isPlayable = playableMoves.some(m => m.tile.id === tile.id);
       const tileElem = renderTile(tile, () => onHandTileClick(index), false);
       
-      if (isPlayable) {
-        tileElem.classList.add("playable");
-      }
+      // SIN ESTRELLAS NI PISTAS: El jugador debe analizar y dar su respuesta libremente
       if (selectedTileIndex === index) {
         tileElem.classList.add("selected");
       }
@@ -873,13 +930,8 @@ function render() {
         }
       }
 
-      // Auto-scroll para mantener visibles los extremos
-      const scrollArea = $("chainScrollArea");
-      if (scrollArea) {
-        setTimeout(() => {
-          scrollArea.scrollLeft = scrollArea.scrollWidth;
-        }, 40);
-      }
+      // Auto-ajuste de escala y vista de la mesa a medida que avanza el juego
+      autoAdjustBoardScale();
     }
   }
 
@@ -907,6 +959,73 @@ function render() {
 
   updateTeacherPanel();
 }
+
+/**
+ * Auto-ajusta la escala y la vista de la mesa de dominó a medida que el juego avanza
+ * y se juegan más fichas, garantizando que toda la cadena quepa y ambos extremos se vean.
+ */
+function autoAdjustBoardScale() {
+  const scrollArea = $("chainScrollArea");
+  const chainEl = $("chain");
+  if (!scrollArea || !chainEl) return;
+
+  if (chain.length === 0) {
+    chainEl.style.transform = "scale(1)";
+    chainEl.style.transformOrigin = "center center";
+    scrollArea.scrollLeft = 0;
+    return;
+  }
+
+  // Ancho visible disponible dentro del tapete verde
+  const availableWidth = scrollArea.clientWidth - 32;
+  if (availableWidth <= 120) return;
+
+  // Calculamos el ancho natural de la cadena sumando el ancho de fichas y botones
+  let naturalWidth = 0;
+  chainEl.querySelectorAll('.tile.board-tile, .drop-target-btn').forEach(el => {
+    if (el.classList.contains('tile')) {
+      const isVert = el.classList.contains('vertical');
+      naturalWidth += (isVert ? 84 : 168);
+    } else if (el.classList.contains('drop-target-btn')) {
+      naturalWidth += 116;
+    }
+  });
+
+  if (naturalWidth <= 0) {
+    naturalWidth = chainEl.scrollWidth || 168;
+  }
+
+  // Factor de escala dinámico para que la cadena se ajuste a la pantalla
+  let scale = 1.0;
+  if (naturalWidth > availableWidth) {
+    scale = availableWidth / naturalWidth;
+    // Límite mínimo para preservar legibilidad del texto e iconos
+    const minScale = window.innerWidth < 640 ? 0.44 : 0.50;
+    scale = Math.max(minScale, Math.min(1.0, scale));
+  }
+
+  const scaleValue = Number(scale.toFixed(3));
+  chainEl.style.transform = `scale(${scaleValue})`;
+  chainEl.style.transformOrigin = "center center";
+  chainEl.style.transition = "transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1)";
+
+  // Centrar suavemente en la zona activa de la mesa
+  requestAnimationFrame(() => {
+    if (scrollArea.scrollWidth > scrollArea.clientWidth) {
+      scrollArea.scrollTo({
+        left: (scrollArea.scrollWidth - scrollArea.clientWidth) / 2,
+        behavior: 'smooth'
+      });
+    } else {
+      scrollArea.scrollLeft = 0;
+    }
+  });
+}
+
+// Escuchador de redimensionamiento de pantalla para mantener la mesa siempre ajustada
+window.addEventListener('resize', () => {
+  autoAdjustBoardScale();
+});
 
 // Helper para registrar eventos de manera segura si el elemento existe en el DOM
 const safeOn = (id, event, handler) => {
