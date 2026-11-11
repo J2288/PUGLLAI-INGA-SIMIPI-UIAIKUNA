@@ -27,34 +27,6 @@
         <p class="auth-subtitle">Dominó Pedagógico en Lengua Inga · Plataforma Educativa</p>
       </div>
 
-      <!-- BOTÓN PRINCIPAL: ENTRAR DIRECTO A JUGAR DOMINÓ (1 CLIC) -->
-      <div class="auth-hero-box">
-        <button type="button" class="btn-hero-domino" onclick="directEnterGame()">
-          <span class="hero-domino-icon">🎮</span>
-          <div class="hero-domino-content">
-            <span class="hero-domino-title">Entrar Directo a Jugar Dominó</span>
-            <span class="hero-domino-sub">Acceso rápido con 1 Clic · Modo Estudiante</span>
-          </div>
-          <span class="hero-domino-arrow">➔</span>
-        </button>
-      </div>
-
-      <!-- ACCESO RÁPIDO INSTITUCIONAL POR ROL (1 Sola fila clara y moderna) -->
-      <div class="auth-roles-section">
-        <div class="auth-roles-label">⚡ Ingreso instantáneo por perfil:</div>
-        <div class="auth-roles-grid">
-          <button type="button" class="auth-role-btn role-admin" onclick="quickEnterRole('admin')" title="Entrar como Administrador con panel de control completo">
-            <span>👑</span> <span>Admin</span>
-          </button>
-          <button type="button" class="auth-role-btn role-docente" onclick="quickEnterRole('docente')" title="Entrar como Docente y ver panel pedagógico">
-            <span>👩‍🏫</span> <span>Docente</span>
-          </button>
-          <button type="button" class="auth-role-btn role-estudiante" onclick="quickEnterRole('estudiante')" title="Entrar como Estudiante con prueba activa">
-            <span>🎓</span> <span>Estudiante</span>
-          </button>
-        </div>
-      </div>
-
       <!-- Pestañas de Navegación de Acceso -->
       <div class="auth-tabs">
         <button id="tabBtn-login" class="auth-tab-btn active" onclick="switchAuthTab('login')">
@@ -197,12 +169,6 @@
             <span>Actualizar Contraseña</span>
           </button>
         </div>
-      </div>
-
-      <!-- Barra de Estado de Conexión del Servidor (Discreta y Elegante) -->
-      <div id="serverStatusBar" class="auth-server-footer">
-        <span class="server-status-dot">🟢</span>
-        <span id="serverStatusText">Servidor Activo en localhost:3000</span>
       </div>
 
     </div>
