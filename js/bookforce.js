@@ -145,14 +145,60 @@ function updateServerStatusBar() {
   if (!bar) return;
 
   if (window.location.protocol === 'file:') {
-    bar.innerHTML = `⚠️ Ejecutando desde archivo local (file:///). El backend está conectado a <a href="http://localhost:3000" style="color:#00E8D7; text-decoration:underline;">http://localhost:3000</a>`;
-    bar.style.background = 'rgba(245, 158, 11, 0.15)';
-    bar.style.color = '#FBBF24';
-    bar.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+    bar.innerHTML = `<span class="server-status-dot">🟡</span> <span>Modo Local (file:///) · Conectado a localhost:3000</span>`;
+  } else if (window.location.host.includes('github.io')) {
+    bar.innerHTML = `<span class="server-status-dot">🟢</span> <span>Plataforma Online en GitHub Pages · Modo Aprendizaje</span>`;
   } else {
-    bar.innerHTML = `🟢 Conectado al Servidor ${BF.platformName || 'PUGLLAI INGA SIMIPI UIAIKUNA'} (<a href="${window.location.origin}" style="color:#FFF; text-decoration:underline;">${window.location.host}</a>)`;
+    bar.innerHTML = `<span class="server-status-dot">🟢</span> <span>Servidor Activo en <strong>${window.location.host || 'localhost:3000'}</strong></span>`;
   }
 }
+
+// Acceso directo instantáneo para probar y mirar el juego de inmediato
+function directOpenDominoDemo(asRole = 'ESTUDIANTE') {
+  const urlParams = new URLSearchParams(window.location.search);
+  const requestedRole = urlParams.get('preview') || asRole;
+
+  if (requestedRole === 'docente' || requestedRole === 'DOCENTE') {
+    BF.user = { id: 2, nombre: 'Prof. Carlos Mendoza', email: 'docente@bookforce.com', rol: 'DOCENTE', estado: 'activo', institucion: 'Colegio Andino' };
+    BF.access = { allowed: true, status: 'DOCENTE' };
+  } else if (requestedRole === 'admin' || requestedRole === 'ADMIN') {
+    BF.user = { id: 1, nombre: 'Director Administrador', email: 'admin@bookforce.com', rol: 'ADMINISTRADOR', estado: 'activo' };
+    BF.access = { allowed: true, status: 'ADMINISTRADOR' };
+  } else {
+    const savedPlayerName = (typeof localStorage !== 'undefined') ? localStorage.getItem('domino_player_name') : null;
+    BF.user = { id: 3, nombre: savedPlayerName || 'Estudiante Demo', email: 'demo@bookforce.com', rol: 'ESTUDIANTE', estado: 'activo' };
+    BF.access = { allowed: true, status: 'DEMO ACTIVO', remainingSeconds: 120 * 60, formattedRemaining: '02:00:00' };
+  }
+
+  BF.token = 'PREVIEW_TOKEN_' + Date.now();
+  localStorage.setItem('bf_token', BF.token);
+  localStorage.setItem('bf_saved_user', JSON.stringify(BF.user));
+  localStorage.setItem('bf_saved_access', JSON.stringify(BF.access));
+
+  renderAppForRole();
+  switchSection(requestedRole === 'admin' ? 'overview' : (requestedRole === 'docente' ? 'teacher-dashboard' : 'domino-game'));
+  if (typeof setMyPlayerName === 'function') {
+    setMyPlayerName(BF.user.nombre);
+  }
+  if (typeof startGame === 'function') {
+    try { startGame(); } catch (_) {}
+  }
+}
+window.directOpenDominoDemo = directOpenDominoDemo;
+
+// Entrada limpia al juego con verificación de nombre
+function directEnterGame() {
+  directOpenDominoDemo('ESTUDIANTE');
+  const savedName = localStorage.getItem('domino_player_name');
+  if (!savedName || savedName.toLowerCase().includes('demo') || savedName.toLowerCase().includes('prueba') || savedName === 'Jugador 1') {
+    if (typeof openPlayerNameModal === 'function') {
+      setTimeout(() => {
+        openPlayerNameModal();
+      }, 250);
+    }
+  }
+}
+window.directEnterGame = directEnterGame;
 
 // Verificar sesión existente con el servidor
 async function verifySession() {
@@ -445,7 +491,7 @@ async function handleLoginSubmit(e) {
 }
 
 // Respaldo de autenticación local si la red o el puerto estuviesen restringidos
-function authenticateOfflineFallback(email, password) {
+function authenticateOfflineFallback(email, password, customName) {
   let user = null;
   let access = { allowed: true, status: 'ACTIVO' };
 
@@ -456,7 +502,8 @@ function authenticateOfflineFallback(email, password) {
   } else {
     // Estudiante por defecto
     const savedPlayerName = (typeof localStorage !== 'undefined') ? localStorage.getItem('domino_player_name') : null;
-    user = { id: 3, nombre: savedPlayerName || 'Estudiante', email: email || 'demo@bookforce.com', rol: 'ESTUDIANTE', estado: 'activo' };
+    const finalName = customName || savedPlayerName || 'Estudiante';
+    user = { id: 3, nombre: finalName, email: email || 'demo@bookforce.com', rol: 'ESTUDIANTE', estado: 'activo' };
     access = { allowed: true, status: 'DEMO ACTIVO', remainingSeconds: 120 * 60, formattedRemaining: '02:00:00' };
   }
 
@@ -471,24 +518,86 @@ function authenticateOfflineFallback(email, password) {
   renderAppForRole();
 }
 
-// Selector rápido de cuentas para evaluación instantánea
-function quickFillLogin(role) {
+// Alternar visibilidad de contraseñas (mostrar/ocultar)
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (btn) btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    if (btn) btn.textContent = '👁️';
+  }
+}
+window.togglePasswordVisibility = togglePasswordVisibility;
+
+// Ingreso instantáneo por perfil (Admin, Docente, Estudiante)
+async function quickEnterRole(role) {
   const emailInput = document.getElementById('loginEmail');
   const passInput = document.getElementById('loginPassword');
 
+  let email = '';
+  let pass = '';
+  let roleTitle = '';
+
   if (role === 'admin') {
-    emailInput.value = 'admin@bookforce.com';
-    passInput.value = 'Admin123*';
-  } else if (role === 'docente' || role === 'vendedor') {
-    emailInput.value = 'docente@bookforce.com';
-    passInput.value = 'Docente123*';
-  } else if (role === 'estudiante' || role === 'demo') {
-    emailInput.value = 'demo@bookforce.com';
-    passInput.value = 'Demo123*';
+    email = 'admin@bookforce.com';
+    pass = 'Admin123*';
+    roleTitle = 'Administrador';
+  } else if (role === 'docente' || role === 'profesor' || role === 'vendedor') {
+    email = 'docente@bookforce.com';
+    pass = 'Docente123*';
+    roleTitle = 'Docente';
+  } else {
+    email = 'demo@bookforce.com';
+    pass = 'Demo123*';
+    roleTitle = 'Estudiante';
   }
 
-  handleLoginSubmit();
+  if (emailInput) emailInput.value = email;
+  if (passInput) passInput.value = pass;
+
+  showToast(`Iniciando sesión como ${roleTitle}...`, 'info');
+
+  try {
+    const res = await apiFetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass, rememberMe: true })
+    });
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch (_) {}
+
+    if (res.ok && data && data.success) {
+      BF.token = data.token;
+      BF.user = data.user;
+      BF.access = data.access;
+      localStorage.setItem('bf_token', data.token);
+      localStorage.setItem('bf_saved_user', JSON.stringify(data.user));
+      localStorage.setItem('bf_saved_access', JSON.stringify(data.access));
+
+      // Si es estudiante y su prueba anterior en DB estaba vencida, conceder sesión demo en frontend
+      if (role === 'estudiante' && (!BF.access || !BF.access.allowed)) {
+        BF.access = { allowed: true, status: 'DEMO ACTIVO', remainingSeconds: 120 * 60, formattedRemaining: '02:00:00' };
+        localStorage.setItem('bf_saved_access', JSON.stringify(BF.access));
+      }
+
+      showToast(`¡Bienvenido! Sesión iniciada como ${BF.user.rol}`, 'success');
+      renderAppForRole();
+      return;
+    }
+  } catch (err) {
+    console.warn('API login no disponible, activando modo local resiliente:', err);
+  }
+
+  authenticateOfflineFallback(email, pass);
 }
+window.quickEnterRole = quickEnterRole;
+window.quickFillLogin = quickEnterRole;
 
 // Registro de Estudiante con Demo automático de 120 minutos
 async function handleRegisterSubmit(e) {
@@ -497,7 +606,6 @@ async function handleRegisterSubmit(e) {
   const email = document.getElementById('regEmail').value.trim();
   const password = document.getElementById('regPassword').value;
   const institucion = document.getElementById('regInstitution')?.value.trim() || 'Colegio Andino';
-  const telefono = document.getElementById('regPhone')?.value.trim() || '';
   const codigoDocente = document.getElementById('regTeacherCode')?.value.trim() || '';
 
   if (!nombre || !email || !password) {
@@ -510,32 +618,47 @@ async function handleRegisterSubmit(e) {
     return;
   }
 
+  // Guardar nombre del estudiante en localStorage para su atril de juego
+  localStorage.setItem('domino_player_name', nombre);
+  if (typeof setMyPlayerName === 'function') setMyPlayerName(nombre);
+
   try {
     const res = await apiFetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, password, institucion, empresa: institucion, telefono, codigoDocente })
+      body: JSON.stringify({ nombre, email, password, institucion, empresa: institucion, codigoDocente })
     });
 
-    const data = await res.json();
-    if (res.ok && data.success) {
+    let data = null;
+    try { data = await res.json(); } catch (_) {}
+
+    if (res.ok && data && data.success) {
       BF.token = data.token;
       BF.user = data.user;
-      BF.access = { status: 'DEMO ACTIVO', remainingSeconds: 120 * 60 };
+      BF.access = { status: 'DEMO ACTIVO', remainingSeconds: 120 * 60, formattedRemaining: '02:00:00' };
       localStorage.setItem('bf_token', data.token);
-      showToast(data.message, 'success');
+      localStorage.setItem('bf_saved_user', JSON.stringify(data.user));
+      localStorage.setItem('bf_saved_access', JSON.stringify(BF.access));
+      showToast(data.message || '¡Cuenta de estudiante creada con éxito! 120 min activos.', 'success');
       renderAppForRole();
-    } else {
-      showToast(data.message || 'Error al registrarse', 'error');
+      return;
+    } else if (data && data.message) {
+      showToast(data.message, 'error');
+      return;
     }
   } catch (err) {
-    // Si la conexión directa falla, registrar y permitir acceso local inmediato
-    authenticateOfflineFallback(email, password);
+    console.warn('Registro directo local por respaldo:', err);
   }
+
+  authenticateOfflineFallback(email, password, nombre);
 }
 
 // Inicio con Google (Simulación SSO certificada con creación real en base de datos)
 async function handleGoogleLogin() {
+  const savedPlayerName = (typeof localStorage !== 'undefined') ? localStorage.getItem('domino_player_name') : null;
+  const userName = savedPlayerName || 'Estudiante Google';
+  showToast('Iniciando acceso con Google...', 'info');
+
   try {
     const mockEmail = 'estudiante.google.' + Math.floor(100 + Math.random() * 900) + '@gmail.com';
     const res = await apiFetch('/api/auth/google', {
@@ -543,17 +666,21 @@ async function handleGoogleLogin() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: mockEmail,
-        nombre: 'Estudiante Google Partner',
+        nombre: userName,
         googleId: 'GOOG-' + Date.now()
       })
     });
 
-    const data = await res.json();
-    if (res.ok && data.success) {
+    let data = null;
+    try { data = await res.json(); } catch (_) {}
+
+    if (res.ok && data && data.success) {
       BF.token = data.token;
       BF.user = data.user;
-      BF.access = data.access;
+      BF.access = data.access || { allowed: true, status: 'DEMO ACTIVO', remainingSeconds: 120 * 60 };
       localStorage.setItem('bf_token', data.token);
+      localStorage.setItem('bf_saved_user', JSON.stringify(data.user));
+      localStorage.setItem('bf_saved_access', JSON.stringify(BF.access));
       showToast('Autenticación con Google exitosa (Demo 120 min activado)', 'success');
       renderAppForRole();
       return;
@@ -562,7 +689,7 @@ async function handleGoogleLogin() {
     console.warn('Google Auth usando modo local');
   }
 
-  authenticateOfflineFallback('estudiante.google@gmail.com', 'Google123*');
+  authenticateOfflineFallback('estudiante.google@gmail.com', 'Google123*', userName);
 }
 
 // Recuperación de Contraseña

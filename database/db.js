@@ -160,8 +160,14 @@ async function initDatabase() {
       );
       console.log('🎓 Estudiante DEMO creado: demo@bookforce.com / Demo123* (120 min activos)');
     } else {
-      // Asegurar que el rol sea ESTUDIANTE (3)
-      await db.run("UPDATE usuarios SET rol_id = 3 WHERE email = 'demo@bookforce.com'");
+      // Asegurar que el rol sea ESTUDIANTE (3) y que la cuenta de prueba de evaluación esté siempre activa
+      const ahora = new Date();
+      const expiraEn = new Date(ahora.getTime() + 120 * 60 * 1000);
+      await db.run("UPDATE usuarios SET rol_id = 3, estado = 'activo', nombre = 'Estudiante Demo' WHERE email = 'demo@bookforce.com'");
+      await db.run(
+        "UPDATE pruebas_demo SET estado = 'ACTIVO', iniciado_en = ?, expira_en = ? WHERE email = 'demo@bookforce.com'",
+        [ahora.toISOString(), expiraEn.toISOString()]
+      );
     }
 
     // Crear también estudiante@bookforce.com como alias explícito
