@@ -1,0 +1,29 @@
+{
+  "name": "yachana-domino",
+  "version": "1.0.0",
+  "description": "Juego educativo interactivo de dominó para aprender la lengua Inga (Colombia)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "yachana",
+    "domino",
+    "inga",
+    "educacion",
+    "intercultural",
+    "gamificacion"
+  ],
+  "author": "Equipo de Desarrollo Yachana Dominó",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "qrcode": "^1.5.4",
+    "sqlite3": "^6.0.1"
+  }
+}

@@ -1,0 +1,1676 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PUGLLAI INGA SIMIPI UIAIKUNA · Plataforma Educativa SaaS & Gestión Académica</title>
+  <meta name="description" content="Plataforma SaaS PUGLLAI INGA SIMIPI UIAIKUNA: Gestión de estudiantes, docentes, roles RBAC, control autoritativo de DEMO y administración de licencias.">
+  
+  <!-- Estilos Corporativos PUGLLAI INGA SIMIPI UIAIKUNA y Juego -->
+  <link rel="stylesheet" href="css/bookforce.css?v=2.4">
+  <link rel="stylesheet" href="css/styles.css?v=2.4">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- Chart.js para Gráficos Interactivos del Dashboard -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ====================================================================== -->
+  <!-- 1. PORTAL DE AUTENTICACIÓN SAAS PREMIUM (LOGIN / REGISTRO / RECUPERACIÓN) -->
+  <!-- ====================================================================== -->
+  <div id="authView" class="auth-wrapper" style="display: flex;">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-logo">⚡</div>
+        <h1 class="auth-title">PUGLLAI INGA SIMIPI UIAIKUNA</h1>
+        <p class="auth-subtitle">Plataforma SaaS Educativa · Roles: Docente, Estudiante y Admin</p>
+      </div>
+
+      <!-- Barra de Estado de Conexión del Servidor -->
+      <div id="serverStatusBar" style="padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700; margin-bottom: 16px; text-align: center; background: rgba(0, 173, 181, 0.15); color: #00E8D7; border: 1px solid rgba(0, 173, 181, 0.3);">
+        🟢 Servidor Activo en <a href="http://localhost:3000" target="_blank" style="color:#FFF; text-decoration:underline;">http://localhost:3000</a>
+      </div>
+
+      <!-- Pestañas de Navegación de Acceso -->
+      <div class="auth-tabs">
+        <button id="tabBtn-login" class="auth-tab-btn active" onclick="switchAuthTab('login')">
+          Iniciar Sesión
+        </button>
+        <button id="tabBtn-register" class="auth-tab-btn" onclick="switchAuthTab('register')">
+          Registrarse (<span id="registerDemoBadge">Demo</span>)
+        </button>
+        <button id="tabBtn-recover" class="auth-tab-btn" onclick="switchAuthTab('recover')">
+          Recuperar
+        </button>
+      </div>
+
+      <!-- FORMULARIO 1: INICIAR SESIÓN -->
+      <div id="formView-login" class="auth-form-view" style="display: block;">
+        
+        <!-- Botón de Prueba Rápida Inmediata del Juego -->
+        <button type="button" class="btn-primary-bf" style="margin-bottom: 14px; padding: 13px; font-size: 14px; font-weight: 800; background: linear-gradient(135deg, #FF7B1C, #E86300); border: 2px solid #FFC629; box-shadow: 0 4px 18px rgba(255, 123, 28, 0.45); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="directOpenDominoDemo()">
+          <span>🀄 Probar Mesa de Dominó Inmediatamente (1 Clic)</span>
+          <span>➔</span>
+        </button>
+
+        <!-- Botones de Acceso Inmediato 1-Click por Rol -->
+        <div style="margin-bottom: 20px; background: rgba(11, 25, 44, 0.6); padding: 12px; border-radius: 12px; border: 1px solid var(--bf-border);">
+          <label style="display:block; font-size:11.5px; font-weight:700; color:var(--bf-accent-light); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; text-align:center;">
+            ⚡ Ingreso Directo con 1 Clic (Selecciona tu Rol):
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <button type="button" class="btn-primary-bf" style="padding: 10px 4px; font-size: 12px; background: linear-gradient(135deg, #0066FF, #0044AA); border: 1px solid rgba(0, 102, 255, 0.4);" onclick="quickFillLogin('admin')">
+              👑 Admin
+            </button>
+            <button type="button" class="btn-primary-bf" style="padding: 10px 4px; font-size: 12px; background: linear-gradient(135deg, #00ADB5, #007D84); border: 1px solid rgba(0, 173, 181, 0.4);" onclick="quickFillLogin('docente')">
+              👩‍🏫 Docente
+            </button>
+            <button type="button" class="btn-primary-bf" style="padding: 10px 4px; font-size: 12px; background: linear-gradient(135deg, #10B981, #047857); border: 1px solid rgba(16, 185, 129, 0.4);" onclick="quickFillLogin('estudiante')">
+              🎓 Estudiante
+            </button>
+          </div>
+        </div>
+
+        <form onsubmit="handleLoginSubmit(event)">
+          <div class="auth-form-group">
+            <label for="loginEmail">Correo Institucional / Personal</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">✉️</span>
+              <input type="email" id="loginEmail" class="auth-input" placeholder="nombre@institucion.edu" required>
+            </div>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="loginPassword">Contraseña</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">🔒</span>
+              <input type="password" id="loginPassword" class="auth-input" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <div class="auth-options">
+            <label class="auth-remember">
+              <input type="checkbox" id="rememberMeCheck" checked>
+              <span>Recordar sesión</span>
+            </label>
+            <button type="button" class="auth-forgot-link" onclick="switchAuthTab('recover')">
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
+
+          <div id="loginAlertBox" style="display:none; padding:10px 14px; border-radius:8px; margin-bottom:14px; font-size:13px; font-weight:600; text-align:center;"></div>
+
+          <button type="submit" class="btn-primary-bf">
+            <span>Iniciar Sesión en PUGLLAI INGA SIMIPI UIAIKUNA</span>
+            <span>➔</span>
+          </button>
+        </form>
+
+        <div class="auth-divider">
+          <span>O CONTINUAR CON</span>
+        </div>
+
+        <button type="button" class="btn-google-bf" onclick="handleGoogleLogin()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.36 7.35 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.24C.45 8.16 0 9.94 0 12s.45 3.84 1.24 5.42l4.04-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+          <span>Acceder con Google</span>
+        </button>
+
+        <!-- Selector rápido de cuentas para evaluación -->
+        <div class="quick-login-pills">
+          <p>Accesos directos por rol:</p>
+          <div class="pills-container">
+            <button class="quick-pill" onclick="quickFillLogin('admin')">👑 Admin</button>
+            <button class="quick-pill" onclick="quickFillLogin('docente')">👩‍🏫 Docente</button>
+            <button class="quick-pill" onclick="quickFillLogin('estudiante')">🎓 Estudiante (2H)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMULARIO 2: REGISTRO DE ESTUDIANTE (CON PRUEBA GRATIS DE 120 MINUTOS) -->
+      <div id="formView-register" class="auth-form-view" style="display: none;">
+        <form onsubmit="handleRegisterSubmit(event)">
+          <div class="auth-form-group">
+            <label for="regName">Nombre Completo del Estudiante</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">👤</span>
+              <input type="text" id="regName" class="auth-input" placeholder="Tu Nombre y Apellido" required>
+            </div>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="regEmail">Correo Electrónico</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">✉️</span>
+              <input type="email" id="regEmail" class="auth-input" placeholder="estudiante@institucion.edu" required>
+            </div>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="regPassword">Contraseña de Acceso</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">🔒</span>
+              <input type="password" id="regPassword" class="auth-input" placeholder="Mínimo 6 caracteres" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="auth-form-group">
+              <label for="regInstitution">Institución / Escuela</label>
+              <input type="text" id="regInstitution" class="auth-input" style="padding-left:14px;" placeholder="Ej: Colegio Andino">
+            </div>
+            <div class="auth-form-group">
+              <label for="regTeacherCode">Código del Docente</label>
+              <input type="text" id="regTeacherCode" class="auth-input" style="padding-left:14px;" placeholder="Ej: DOC-001 (Opcional)">
+            </div>
+          </div>
+
+          <div style="padding: 10px 14px; background: rgba(0, 173, 181, 0.12); border: 1px solid rgba(0, 173, 181, 0.3); border-radius: 8px; margin-bottom: 16px; font-size: 12px; color: var(--bf-accent-light);">
+            ⚡ <strong>Prueba Gratuita Estudiantil:</strong> Tu prueba iniciará automáticamente con el registro por <span id="registerDemoDurationNotice">el tiempo configurado</span> y será controlada por el servidor sin interrupciones.
+          </div>
+
+          <button type="submit" class="btn-primary-bf">
+            <span>Crear Cuenta de Estudiante y Activar DEMO</span>
+            <span>🚀</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- FORMULARIO 3: RECUPERACIÓN DE CONTRASEÑA -->
+      <div id="formView-recover" class="auth-form-view" style="display: none;">
+        <form onsubmit="handleRecoverPasswordSubmit(event)">
+          <div class="auth-form-group">
+            <label for="recoverEmail">Ingresa tu correo registrado</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">✉️</span>
+              <input type="email" id="recoverEmail" class="auth-input" placeholder="nombre@institucion.edu" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary-bf">
+            <span>Generar Código de Recuperación</span>
+            <span>🔑</span>
+          </button>
+        </form>
+
+        <div id="recoveryCodeBox" style="display: none; margin-top: 18px; padding: 14px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px;">
+          <p id="recoveryCodeDisplay" style="font-weight: 800; color: #34D399; margin-bottom: 10px; font-family: monospace;"></p>
+          <div class="auth-form-group">
+            <label for="resetNewPassword">Nueva Contraseña</label>
+            <input type="password" id="resetNewPassword" class="auth-input" placeholder="Nueva contraseña segura">
+          </div>
+          <button type="button" class="btn-primary-bf" style="margin-top: 8px;" onclick="handleResetPasswordSubmit()">
+            <span>Actualizar Contraseña</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- 2. APLICACIÓN SAAS PRINCIPAL (SIDEBAR + MAIN SHELL) -->
+  <!-- ====================================================================== -->
+  <div id="saasAppView" class="saas-layout" style="display: none;">
+
+    <!-- BARRA LATERAL (SIDEBAR) CORPORATIVA -->
+    <aside id="saasSidebar" class="saas-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">⚡</div>
+        <div>
+          <div class="sidebar-brand-name">PUGLLAI INGA SIMIPI UIAIKUNA</div>
+          <span class="sidebar-badge">Gestión Académica</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+
+        <!-- SELECTOR RÁPIDO DE ROL EN EL SIDEBAR -->
+        <div style="padding: 8px 10px; background: rgba(0, 102, 255, 0.12); border: 1px solid rgba(0, 173, 181, 0.35); border-radius: 10px; margin-bottom: 8px;">
+          <div style="font-size: 10px; font-weight: 800; color: #00E8D7; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; text-align: center;">
+            ⚡ Vista de Rol Activa:
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
+            <button type="button" class="btn-primary-bf" style="padding: 6px 2px; font-size: 11px; font-weight: 800; background: linear-gradient(135deg, #0066FF, #0044AA); border: 1px solid rgba(0, 102, 255, 0.5);" onclick="quickSwitchUserRole('ADMINISTRADOR')" title="Ver Administración Central con todas las opciones">
+              👑 Admin
+            </button>
+            <button type="button" class="btn-primary-bf" style="padding: 6px 2px; font-size: 11px; font-weight: 800; background: linear-gradient(135deg, #00ADB5, #007D84); border: 1px solid rgba(0, 173, 181, 0.5);" onclick="quickSwitchUserRole('DOCENTE')" title="Ver Panel Docente">
+              👩‍🏫 Docente
+            </button>
+            <button type="button" class="btn-primary-bf" style="padding: 6px 2px; font-size: 11px; font-weight: 800; background: linear-gradient(135deg, #10B981, #047857); border: 1px solid rgba(16, 185, 129, 0.5);" onclick="quickSwitchUserRole('ESTUDIANTE')" title="Ver Mesa de Juego">
+              🎓 Alumno
+            </button>
+          </div>
+        </div>
+
+        <!-- 👑 MENÚ OFICIAL: ADMINISTRACIÓN CENTRAL (Todas las 9 opciones 100% visibles) -->
+        <div class="nav-admin-only" id="navAdminCentralBlock">
+          <div class="sidebar-nav-title admin-header" style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="display: flex; align-items: center; gap: 6px; font-weight: 900; color: #00E8D7;">
+              <span>👑</span> ADMINISTRACIÓN CENTRAL
+            </span>
+            <span class="badge-bf badge-cyan" style="font-size: 9px; padding: 2px 6px;">Control Total</span>
+          </div>
+          <a class="sidebar-link active" data-section="overview" onclick="switchSection('overview')">
+            <span class="sidebar-link-icon">📊</span>
+            <span>Panel Principal (Dashboard)</span>
+          </a>
+          <a class="sidebar-link" data-section="users" onclick="switchSection('users')">
+            <span class="sidebar-link-icon">👥</span>
+            <span>Gestión de Usuarios</span>
+          </a>
+          <a class="sidebar-link" data-section="create-user" onclick="switchSection('create-user')">
+            <span class="sidebar-link-icon">➕</span>
+            <span>Registrar Usuario</span>
+          </a>
+          <a class="sidebar-link" data-section="subscriptions" onclick="switchSection('subscriptions')">
+            <span class="sidebar-link-icon">💳</span>
+            <span>Suscripciones / Licencias</span>
+          </a>
+          <a class="sidebar-link" data-section="demos" onclick="switchSection('demos')">
+            <span class="sidebar-link-icon">⏳</span>
+            <span>Control de Pruebas DEMO</span>
+          </a>
+          <a class="sidebar-link" data-section="teachers" onclick="switchSection('teachers')">
+            <span class="sidebar-link-icon">👩‍🏫</span>
+            <span>Gestión de Docentes</span>
+          </a>
+          <a class="sidebar-link" data-section="audit" onclick="switchSection('audit')">
+            <span class="sidebar-link-icon">📜</span>
+            <span>Historial y Auditoría</span>
+          </a>
+          <a class="sidebar-link" data-section="settings" onclick="switchSection('settings')">
+            <span class="sidebar-link-icon">⚙️</span>
+            <span>Parámetros de Operación</span>
+          </a>
+          <a class="sidebar-link" data-section="domino-game" onclick="switchSection('domino-game')">
+            <span class="sidebar-link-icon">🀄</span>
+            <span>Mesa de Dominó</span>
+          </a>
+        </div>
+
+        <!-- ACCESO RÁPIDO A ADMINISTRACIÓN CENTRAL SI SE NAVEGA EN OTRO ROL -->
+        <div id="quickAdminAccessPrompt" style="display: none; margin-bottom: 10px;">
+          <button type="button" class="btn-primary-bf" style="width: 100%; justify-content: center; font-size: 12px; padding: 8px 10px; background: linear-gradient(135deg, #0066FF, #0044AA); border: 1px solid rgba(0, 173, 181, 0.4);" onclick="quickSwitchUserRole('ADMINISTRADOR')">
+            <span>👑 Ir a Administración Central</span>
+            <span>➔</span>
+          </button>
+        </div>
+
+        <!-- MENÚ DEL DOCENTE -->
+        <div class="nav-teacher-only" style="display: none;">
+          <div class="sidebar-nav-title">Gestión Docente</div>
+          <a class="sidebar-link active" data-section="teacher-dashboard" onclick="switchSection('teacher-dashboard')">
+            <span class="sidebar-link-icon">👩‍🏫</span>
+            <span>Mi Grupo de Estudiantes</span>
+          </a>
+          <a class="sidebar-link" data-section="domino-game" onclick="switchSection('domino-game')">
+            <span class="sidebar-link-icon">🀄</span>
+            <span>Mesa Pedagógica de Dominó</span>
+          </a>
+        </div>
+
+        <!-- ESPACIO DE APRENDIZAJE DEL ESTUDIANTE Y ACCESOS RÁPIDOS -->
+        <div class="sidebar-nav-title">Navegación del Juego</div>
+        <a class="sidebar-link active" data-section="domino-game" onclick="switchSection('domino-game')">
+          <span class="sidebar-link-icon">🎮</span>
+          <span>Mesa de Juego</span>
+        </a>
+        <a class="sidebar-link" onclick="if (typeof initGame === 'function') initGame(); switchSection('domino-game');">
+          <span class="sidebar-link-icon">🔄</span>
+          <span>Nueva Partida</span>
+        </a>
+        <a class="sidebar-link" onclick="toggleGameModesHub(); switchSection('domino-game');">
+          <span class="sidebar-link-icon">🗂️</span>
+          <span>Modalidades</span>
+        </a>
+        <a class="sidebar-link" onclick="openQrModal()">
+          <span class="sidebar-link-icon">📱</span>
+          <span>Multijugador QR</span>
+        </a>
+        <a class="sidebar-link" onclick="openModal('levelsModal')">
+          <span class="sidebar-link-icon">🏆</span>
+          <span>Niveles Curriculares</span>
+        </a>
+        <a class="sidebar-link" onclick="openModal('vocabModal')">
+          <span class="sidebar-link-icon">📖</span>
+          <span>Diccionario Inga</span>
+        </a>
+        <a class="sidebar-link" onclick="openModal('teacherModal')">
+          <span class="sidebar-link-icon">📊</span>
+          <span>Estadísticas / Auditoría</span>
+        </a>
+        <a class="sidebar-link" onclick="openModal('rulesModal')">
+          <span class="sidebar-link-icon">❓</span>
+          <span>Reglas de Juego</span>
+        </a>
+
+        <!-- CERRAR SESIÓN -->
+        <div style="margin-top: auto; padding-top: 16px;">
+          <a class="sidebar-link" onclick="logout()" style="color: #F87171;">
+            <span class="sidebar-link-icon">🚪</span>
+            <span>Cerrar sesión</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card">
+          <div id="sidebarUserAvatar" class="sidebar-user-avatar">A</div>
+          <div class="sidebar-user-info">
+            <div id="sidebarUserName" class="sidebar-user-name">Usuario</div>
+            <div id="sidebarUserRole" class="sidebar-user-role">ADMINISTRADOR</div>
+          </div>
+          <button type="button" class="sidebar-logout-btn" onclick="logout()" title="Cerrar sesión del sistema">
+            🚪
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Telón de fondo oscuro para cerrar el menú en celulares -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop" onclick="toggleMobileSidebar(false)"></div>
+
+    <!-- ÁREA DE CONTENIDO PRINCIPAL -->
+    <main class="saas-main">
+
+      <!-- BARRA SUPERIOR (TOPBAR) -->
+      <header class="saas-topbar">
+        <div class="topbar-left" style="display: flex; align-items: center;">
+          <button id="mobileSidebarToggle" class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Alternar menú lateral" title="Ocultar / Mostrar menú lateral (Pantalla Completa)">
+            <span>☰</span>
+          </button>
+          <h2 id="topbarPageTitle" class="topbar-page-title">Panel Principal</h2>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Widget Autoritativo de DEMO (120 minutos) -->
+          <div id="demoTimerWidget" class="demo-timer-widget" style="display: none;">
+            <span class="demo-timer-icon">⏱️</span>
+            <div>
+              <span class="demo-timer-text">DEMO Estudiantil:</span>
+              <span id="demoClock" class="demo-timer-clock">02:00:00</span>
+            </div>
+            <div class="demo-progress-pill">
+              <div id="demoProgressBar" class="demo-progress-bar"></div>
+            </div>
+          </div>
+
+          <button type="button" class="topbar-btn" id="topbarAdminCentralBtn" onclick="quickSwitchUserRole('ADMINISTRADOR')" title="Abrir Administración Central con todas las opciones" style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.25) 0%, rgba(0, 173, 181, 0.2) 100%); border-color: rgba(0, 173, 181, 0.5); color: #FFF; font-weight: 700;">
+            <span>👑</span> <span>Administración Central</span>
+          </button>
+
+          <button class="topbar-btn" onclick="verifySession()" title="Sincronizar con servidor">
+            <span>🔄</span> <span>Sincronizar</span>
+          </button>
+          <button class="topbar-btn" onclick="logout()" title="Cerrar sesión">
+            <span>🚪</span> <span>Salir</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENIDO DINÁMICO DE PANELES -->
+      <div class="saas-content">
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 1: INICIO / DASHBOARD ADMINISTRATIVO -->
+        <!-- ================================================================ -->
+        <section id="section-overview" class="saas-panel-section" style="display: block;">
+          
+          <!-- Banner de Bienvenida -->
+          <div style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.18) 0%, rgba(0, 173, 181, 0.15) 100%); border: 1px solid rgba(0, 173, 181, 0.3); border-radius: var(--bf-radius-lg); padding: 22px 26px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 id="dashboardWelcomeTitle" style="font-size: 22px; font-weight: 800; color: #FFFFFF;">¡Bienvenido al Panel de Control de PUGLLAI INGA SIMIPI UIAIKUNA!</h2>
+              <p style="font-size: 13.5px; color: var(--bf-text-muted); margin-top: 4px;">Supervisión global de estudiantes, docentes, pruebas DEMO y administración de licencias.</p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="topbar-btn" style="background: linear-gradient(135deg, #FF7B1C, #E86300); border-color: transparent; color: #FFF; font-weight: 800; padding: 10px 18px; font-size: 13.5px; box-shadow: 0 4px 14px rgba(255, 123, 28, 0.4);" onclick="switchSection('domino-game')">
+                <span>🀄</span> <span>Abrir Mesa de Dominó</span>
+              </button>
+              <button class="topbar-btn" style="background: var(--bf-primary); border-color: transparent;" onclick="switchSection('create-user')">
+                <span>➕</span> <span>Nuevo Usuario / Estudiante</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- TARJETAS DE ESTADÍSTICAS (KPIs) -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Total Registrados</span>
+                <div class="kpi-icon-wrap" style="color: #38BDF8;">👥</div>
+              </div>
+              <div id="kpiTotalUsers" class="kpi-value">0</div>
+              <div class="kpi-meta"><span class="kpi-trend-up">↑ Activo</span> Base institucional central</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Usuarios Activos</span>
+                <div class="kpi-icon-wrap" style="color: #34D399;">✅</div>
+              </div>
+              <div id="kpiActiveUsers" class="kpi-value">0</div>
+              <div class="kpi-meta">Con acceso vigente</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">En Período DEMO</span>
+                <div class="kpi-icon-wrap" style="color: var(--bf-accent);">⏳</div>
+              </div>
+              <div id="kpiActiveDemos" class="kpi-value">0</div>
+              <div class="kpi-meta">Prueba estudiantil 120 min</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">DEMO Vencido</span>
+                <div class="kpi-icon-wrap" style="color: #FBBF24;">⌛</div>
+              </div>
+              <div id="kpiExpiredDemos" class="kpi-value">0</div>
+              <div class="kpi-meta">Requieren licencia</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Licencias Activas</span>
+                <div class="kpi-icon-wrap" style="color: #A78BFA;">💳</div>
+              </div>
+              <div id="kpiActiveSubs" class="kpi-value">0</div>
+              <div class="kpi-meta">Planes y suscripciones</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Licencias Vencidas</span>
+                <div class="kpi-icon-wrap" style="color: #F87171;">⚠️</div>
+              </div>
+              <div id="kpiExpiredSubs" class="kpi-value">0</div>
+              <div class="kpi-meta">Pendientes de renovación</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Cuentas Bloqueadas</span>
+                <div class="kpi-icon-wrap" style="color: #EF4444;">🔒</div>
+              </div>
+              <div id="kpiBlockedUsers" class="kpi-value">0</div>
+              <div class="kpi-meta">Acceso restringido</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Ingresos Licencias</span>
+                <div class="kpi-icon-wrap" style="color: #34D399;">💰</div>
+              </div>
+              <div id="kpiRevenue" class="kpi-value">$0.00</div>
+              <div class="kpi-meta">Facturación estimada</div>
+            </div>
+          </div>
+
+          <!-- GRÁFICOS Y ALERTAS -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title">Tendencia de Registros Estudiantiles (Últimos 7 días)</h3>
+                <span class="badge-bf badge-cyan">En Vivo</span>
+              </div>
+              <div class="chart-canvas-container">
+                <canvas id="chartUsersTrend"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title">Distribución por Roles (Docentes, Estudiantes, Admins)</h3>
+              </div>
+              <div class="chart-canvas-container">
+                <canvas id="chartRolesDistribution"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alertas de Licencias Próximas a Vencer -->
+          <div class="saas-table-card" style="padding: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+              <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF;">🔔 Alertas de Licencias Próximas a Vencer (5 días)</h3>
+              <span class="badge-bf badge-warning">Atención Académica</span>
+            </div>
+            <div id="expiringAlertsContainer"></div>
+          </div>
+
+          <!-- Tabla de Estudiantes Recientemente Incorporados -->
+          <div class="saas-table-card">
+            <div class="table-toolbar">
+              <div class="table-title-group">
+                <h3>Usuarios y Estudiantes Recientes</h3>
+                <p>Últimos registros en la plataforma central</p>
+              </div>
+              <button class="topbar-btn" onclick="switchSection('users')">Ver Todos ➔</button>
+            </div>
+            <div class="table-container">
+              <table class="saas-table">
+                <thead>
+                  <tr>
+                    <th>Usuario / Estudiante</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Estado de Acceso</th>
+                    <th>Último Inicio</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="recentUsersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 2: GESTIÓN DE USUARIOS / ESTUDIANTES -->
+        <!-- ================================================================ -->
+        <section id="section-users" class="saas-panel-section" style="display: none;">
+          <div class="saas-table-card">
+            <div class="table-toolbar">
+              <div class="table-title-group">
+                <h3>Gestión Central de Estudiantes y Usuarios</h3>
+                <p>Control de cuentas, roles (Docente, Estudiante, Administrador), estados de prueba y licencias</p>
+              </div>
+
+              <div class="table-actions-group">
+                <!-- Búsqueda en tiempo real -->
+                <div class="table-search-box">
+                  <span class="table-search-icon">🔍</span>
+                  <input type="text" id="userSearchInput" class="table-search-input" placeholder="Buscar por nombre o correo...">
+                </div>
+
+                <!-- Filtros por estado -->
+                <div class="filter-pills">
+                  <button class="filter-btn filter-user-btn active" data-filter="todos">Todos</button>
+                  <button class="filter-btn filter-user-btn" data-filter="activos">Activos</button>
+                  <button class="filter-btn filter-user-btn" data-filter="demo">DEMO (120m)</button>
+                  <button class="filter-btn filter-user-btn" data-filter="vencidos">Vencidos</button>
+                  <button class="filter-btn filter-user-btn" data-filter="bloqueados">Bloqueados</button>
+                </div>
+
+                <button class="btn-primary-bf" style="width: auto; padding: 8px 16px; font-size: 13px;" onclick="switchSection('create-user')">
+                  <span>➕</span> <span>Registrar Usuario</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="saas-table">
+                <thead>
+                  <tr>
+                    <th>Nombre / Institución</th>
+                    <th>Correo Electrónico</th>
+                    <th>Rol</th>
+                    <th>Acceso / DEMO (120m)</th>
+                    <th>Último Login</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 3: REGISTRAR USUARIO MANUALMENTE -->
+        <!-- ================================================================ -->
+        <section id="section-create-user" class="saas-panel-section" style="display: none;">
+          <div class="saas-modal-card" style="max-width: 640px; margin: 0 auto;">
+            <div class="modal-header">
+              <h3 class="modal-title">Registrar Nuevo Usuario / Estudiante</h3>
+            </div>
+            <form onsubmit="handleAdminCreateUser(event)">
+              <div class="auth-form-group">
+                <label>Nombre y Apellidos</label>
+                <input type="text" id="adminNewUserName" class="auth-input" style="padding-left:14px;" placeholder="Ej: Marcela Vargas" required>
+              </div>
+
+              <div class="auth-form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="adminNewUserEmail" class="auth-input" style="padding-left:14px;" placeholder="usuario@institucion.edu" required>
+              </div>
+
+              <div class="auth-form-group">
+                <label>Contraseña Provisional</label>
+                <input type="password" id="adminNewUserPass" class="auth-input" style="padding-left:14px;" placeholder="Mínimo 6 caracteres" required>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="auth-form-group">
+                  <label>Rol del Sistema</label>
+                  <select id="adminNewUserRole" class="auth-input" style="padding-left:14px;">
+                    <option value="3">🎓 ESTUDIANTE</option>
+                    <option value="2">👩‍🏫 DOCENTE</option>
+                    <option value="1">👑 ADMINISTRADOR</option>
+                  </select>
+                </div>
+                <div class="auth-form-group">
+                  <label>Institución / Escuela</label>
+                  <input type="text" id="adminNewUserCompany" class="auth-input" style="padding-left:14px;" placeholder="Ej: Colegio Andino">
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="auth-form-group">
+                  <label>Tipo de Habilitación Inicial</label>
+                  <select id="adminNewUserAccessType" class="auth-input" style="padding-left:14px;">
+                    <option value="demo">Prueba Gratuita DEMO (120 min)</option>
+                    <option value="suscripcion">Licencia / Suscripción Completa</option>
+                  </select>
+                </div>
+                <div class="auth-form-group">
+                  <label>Duración DEMO (Minutos)</label>
+                  <input type="number" id="adminNewUserDemoMins" class="auth-input" style="padding-left:14px;" value="120" min="10">
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button type="submit" class="btn-primary-bf">
+                  <span>Guardar y Habilitar Usuario</span>
+                </button>
+                <button type="button" class="topbar-btn" onclick="switchSection('users')">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 4: SUSCRIPCIONES Y LICENCIAS -->
+        <!-- ================================================================ -->
+        <section id="section-subscriptions" class="saas-panel-section" style="display: none;">
+          <div class="saas-table-card">
+            <div class="table-toolbar">
+              <div class="table-title-group">
+                <h3>Administración de Licencias y Suscripciones</h3>
+                <p>Planes activos, vencimientos de licencias e historial</p>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="saas-table">
+                <thead>
+                  <tr>
+                    <th>Estudiante / Usuario</th>
+                    <th>Plan / Licencia</th>
+                    <th>Monto</th>
+                    <th>Fecha Inicio</th>
+                    <th>Vencimiento</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="subscriptionsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 5: PRUEBAS DEMO (120 MINUTOS) -->
+        <!-- ================================================================ -->
+        <section id="section-demos" class="saas-panel-section" style="display: none;">
+          <div class="saas-table-card">
+            <div class="table-toolbar">
+              <div class="table-title-group">
+                <h3>Control Estricto de Pruebas DEMO (120 Minutos)</h3>
+                <p>Supervisión en tiempo real del cálculo autoritativo en el servidor</p>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="saas-table">
+                <thead>
+                  <tr>
+                    <th>Estudiante</th>
+                    <th>Correo</th>
+                    <th>Duración Base</th>
+                    <th>Tiempo Restante</th>
+                    <th>Estado Servidor</th>
+                    <th>Acciones Rápidas</th>
+                  </tr>
+                </thead>
+                <tbody id="demosTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 6: DOCENTES -->
+        <!-- ================================================================ -->
+        <section id="section-teachers" class="saas-panel-section" style="display: none;">
+          <div class="saas-table-card">
+            <div class="table-toolbar">
+              <div class="table-title-group">
+                <h3>Planta Docente y Tutores Autorizados</h3>
+                <p>Docentes facultados para gestionar grupos de estudiantes</p>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="saas-table">
+                <thead>
+                  <tr>
+                    <th>Nombre Docente</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Último Acceso</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="teachersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 7: HISTORIAL DE ACTIVIDAD (AUDITORÍA) -->
+        <!-- ================================================================ -->
+        <section id="section-audit" class="saas-panel-section" style="display: none;">
+          <div class="saas-table-card">
+            <div class="table-toolbar">
+              <div class="table-title-group">
+                <h3>Registro de Ciberseguridad y Auditoría Administrativa</h3>
+                <p>Trazabilidad inmutable de altas, bajas, renovaciones e inicios de sesión</p>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="saas-table">
+                <thead>
+                  <tr>
+                    <th>Fecha y Hora</th>
+                    <th>Usuario / Origen</th>
+                    <th>Módulo</th>
+                    <th>Acción Ejecutada</th>
+                    <th>Detalles Técnicos</th>
+                  </tr>
+                </thead>
+                <tbody id="auditLogsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 8: CONFIGURACIÓN E INTEGRACIÓN CON PANEL EXTERNO -->
+        <!-- ================================================================ -->
+        <section id="section-settings" class="saas-panel-section" style="display: none;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="saas-table-card" style="padding: 24px;">
+              <h3 style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px;">🔗 Integración con Panel Externo</h3>
+              <p style="font-size: 13px; color: var(--bf-text-muted); line-height: 1.6; margin-bottom: 18px;">
+                La arquitectura está completamente preparada y desacoplada para vincular el panel externo que suministrarás.
+              </p>
+              
+              <div style="background: rgba(11, 25, 44, 0.8); border: 1px solid var(--bf-border); border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--bf-text-dim);">ESTADO DE ARQUITECTURA:</div>
+                <div style="font-size: 16px; font-weight: 800; color: var(--bf-accent);" id="externalPanelStatusBadge">LISTO_PARA_VINCULAR</div>
+                
+                <div style="margin-top: 10px; font-size: 12px; color: var(--bf-text-dim);">ENDPOINT DE SINCRONIZACIÓN:</div>
+                <code id="externalEndpointDisplay" style="color: #38BDF8; font-size: 12px;">/api/external-panel/sync-user</code>
+
+                <div style="margin-top: 10px; font-size: 12px; color: var(--bf-text-dim);">HEADER DE AUTENTICACIÓN:</div>
+                <code style="color: #34D399; font-size: 12px;">X-External-Panel-Key: <span id="externalApiKeyHint">bkforce_live_sec_***</span></code>
+              </div>
+
+              <button class="btn-primary-bf" onclick="testExternalPanelSync()">
+                <span>Simular Conexión Segura de Panel Externo</span>
+                <span>⚡</span>
+              </button>
+            </div>
+
+            <div class="saas-table-card" style="padding: 24px;">
+              <h3 style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px;">⚙️ Parámetros de Operación</h3>
+              <form id="systemSettingsForm" onsubmit="handleSaveSystemSettings(event)">
+                <div class="auth-form-group">
+                  <label for="settingsPlatformName">Nombre de la Plataforma</label>
+                  <input type="text" id="settingsPlatformName" class="auth-input" value="PUGLLAI INGA SIMIPI UIAIKUNA" required>
+                </div>
+                <div class="auth-form-group">
+                  <label for="settingsDemoDuration">Duración Predeterminada del DEMO (Minutos)</label>
+                  <input type="number" id="settingsDemoDuration" class="auth-input" value="120" min="1" step="1" required>
+                  <small style="display:block; margin-top:6px; color: var(--bf-text-muted); font-size:12.5px; line-height: 1.4;">
+                    Define cuántos minutos de acceso gratuito recibirán los nuevos usuarios registrados.
+                  </small>
+                </div>
+                <div class="auth-form-group">
+                  <label>Cifrado Criptográfico de Contraseñas</label>
+                  <input type="text" class="auth-input" value="bcrypt (Salt 10 Rounds) + JWT Session" readonly>
+                </div>
+                <div class="auth-form-group">
+                  <label>Roles Oficiales</label>
+                  <input type="text" class="auth-input" value="ADMINISTRADOR · DOCENTE · ESTUDIANTE" readonly>
+                </div>
+
+                <button type="submit" id="saveSettingsBtn" class="btn-primary-bf" style="margin-top: 14px; width: 100%; justify-content: center;">
+                  <span>GUARDAR CONFIGURACIÓN</span>
+                  <span>💾</span>
+                </button>
+                <div id="settingsAlertBox" style="display: none; margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 13px; text-align: center; font-weight: 600;"></div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 9: PANEL PEDAGÓGICO DEL DOCENTE -->
+        <!-- ================================================================ -->
+        <section id="section-teacher-dashboard" class="saas-panel-section" style="display: none;">
+          <!-- Banner Docente -->
+          <div style="background: linear-gradient(135deg, rgba(0, 173, 181, 0.18) 0%, rgba(0, 102, 255, 0.12) 100%); border: 1px solid rgba(0, 173, 181, 0.3); border-radius: var(--bf-radius-lg); padding: 22px 26px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 800; color: var(--bf-accent); text-transform: uppercase;">Código de Docente Autorizado: <span id="teacherCodeBadge">DOC-001</span></div>
+              <h2 style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-top: 4px;">Mi Grupo de Estudiantes y Seguimiento Pedagógico</h2>
+              <p style="font-size: 13px; color: var(--bf-text-muted); margin-top: 4px;">Supervisión de avances pedagógicos, tiempos DEMO y acceso a la mesa interactiva de dominó en lengua Inga.</p>
+            </div>
+            <button class="btn-primary-bf" style="width: auto; padding: 12px 24px; font-size: 14px; background: linear-gradient(135deg, #FF7B1C, #E86300); box-shadow: 0 4px 14px rgba(255, 123, 28, 0.4);" onclick="switchSection('domino-game')">
+              <span>🀄 Abrir Mesa Pedagógica de Dominó</span>
+              <span>➔</span>
+            </button>
+          </div>
+
+          <!-- Métricas del Docente -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-header"><span class="kpi-title">Mis Estudiantes</span><div class="kpi-icon-wrap">🎓</div></div>
+              <div id="teacherTotalStudents" class="kpi-value">0</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-header"><span class="kpi-title">Demos Activos (120m)</span><div class="kpi-icon-wrap" style="color:var(--bf-accent);">⏳</div></div>
+              <div id="teacherActiveDemos" class="kpi-value">0</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-header"><span class="kpi-title">Licencias Activas</span><div class="kpi-icon-wrap" style="color:#34D399;">💳</div></div>
+              <div id="teacherActiveSubs" class="kpi-value">0</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-header"><span class="kpi-title">Comisión / Beneficio</span><div class="kpi-icon-wrap" style="color:#FBBF24;">💰</div></div>
+              <div id="teacherCommissions" class="kpi-value">$0.00 USD</div>
+            </div>
+          </div>
+
+          <!-- Tabla de Estudiantes del Docente -->
+          <div class="saas-table-card">
+            <div class="table-toolbar">
+              <div class="table-title-group">
+                <h3>Estudiantes Asignados a tu Grupo</h3>
+                <p>Seguimiento de tiempos DEMO y estados de activación pedagógica</p>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="saas-table">
+                <thead>
+                  <tr>
+                    <th>Estudiante / Institución</th>
+                    <th>Correo</th>
+                    <th>Estado Acceso</th>
+                    <th>Tiempo DEMO Restante</th>
+                    <th>Fecha Alta</th>
+                    <th>Estado Cuenta</th>
+                  </tr>
+                </thead>
+                <tbody id="teacherStudentsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Formulario de Alta de Estudiante por Docente -->
+          <div class="saas-modal-card" style="margin-top: 24px;">
+            <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 14px;">Registrar Nuevo Estudiante en tu Grupo</h3>
+            <form id="teacherStudentForm" onsubmit="handleTeacherRegisterStudent(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="auth-form-group">
+                  <label>Nombre del Estudiante</label>
+                  <input type="text" id="teacherNewStudentName" class="auth-input" style="padding-left:14px;" placeholder="Nombre completo" required>
+                </div>
+                <div class="auth-form-group">
+                  <label>Correo Electrónico</label>
+                  <input type="email" id="teacherNewStudentEmail" class="auth-input" style="padding-left:14px;" placeholder="estudiante@institucion.edu" required>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                <div class="auth-form-group">
+                  <label>Contraseña</label>
+                  <input type="password" id="teacherNewStudentPass" class="auth-input" style="padding-left:14px;" placeholder="••••••••" required>
+                </div>
+                <div class="auth-form-group">
+                  <label>Institución / Escuela</label>
+                  <input type="text" id="teacherNewStudentInst" class="auth-input" style="padding-left:14px;" placeholder="Colegio Andino">
+                </div>
+                <div class="auth-form-group">
+                  <label>Teléfono</label>
+                  <input type="tel" id="teacherNewStudentPhone" class="auth-input" style="padding-left:14px;" placeholder="+57 ...">
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary-bf" style="margin-top: 10px;">
+                <span>Registrar Estudiante con DEMO de 120 Minutos</span>
+                <span>➕</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 10: MESA PEDAGÓGICA DE DOMINÓ (DOCENTES Y ESTUDIANTES)   -->
+        <!-- ================================================================ -->
+        <section id="section-domino-game" class="saas-panel-section" style="display: none;">
+          
+          <!-- Sugerencia visual para girar pantalla en celular -->
+          <div id="orientationTip" class="orientation-tip-banner" style="display: none;">
+            <span style="font-size: 20px;">🔄</span>
+            <div style="flex: 1;">
+              <strong>Experiencia Óptima:</strong> En celulares puedes girar tu pantalla a modo horizontal (Landscape) para ampliar el tapete de juego.
+            </div>
+            <button type="button" class="orientation-tip-close" onclick="dismissOrientationTip()" title="Ocultar sugerencia">✕</button>
+          </div>
+
+          <!-- Barra Superior de la Mesa: Identidad, Nivel, Racha, Puntos y Controles -->
+          <div style="background: linear-gradient(135deg, #7A1F3D 0%, #4A0E21 100%); border-radius: 16px; padding: 14px 20px; border-bottom: 4px solid #FFC629; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 28px; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 12px; border: 2px solid #FFC629;">🀄</span>
+              <div>
+                <h3 style="color: #FFFFFF; font-size: 17px; font-weight: 900; margin: 0; text-transform: uppercase;">
+                  PUGLLAI INGA SIMIPI <span style="color:#FFC629;">UIAIKUNA</span>
+                </h3>
+                <p style="color: #FFE58F; font-size: 12px; font-weight: 700; margin: 2px 0 0;">Dominó Tradicional en Lengua Inga · Aprendizaje Interactivo</p>
+              </div>
+            </div>
+
+            <!-- Píldoras de estado y progreso en tiempo real -->
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div id="levelBadge" class="badge-pill" style="background: rgba(255,255,255,0.18); color:#FFF; font-size:12px; padding:6px 12px; cursor:pointer;" onclick="openModal('levelsModal')" title="Clic para cambiar de nivel">
+                🏆 <span id="currentLevelName">Nivel 1 · Shuk - Baraja Oficial Inga (28 Fichas)</span>
+              </div>
+              <div class="badge-pill" style="background: rgba(255, 123, 28, 0.25); color:#FFC629; font-size:12px; padding:6px 12px; border-color: rgba(255, 123, 28, 0.5);">
+                🔥 Racha: <strong id="streakCount" style="color:#FFF; margin-left:3px;">0</strong>
+              </div>
+              <div class="badge-pill score-badge" style="font-size:12px; padding:6px 12px;">
+                ⭐ <strong id="score">0 pts</strong>
+              </div>
+              <div class="badge-pill" style="background: rgba(18, 181, 203, 0.25); color:#00E8D7; font-size:12px; padding:6px 12px; border-color: rgba(18, 181, 203, 0.4);">
+                🪙 <strong id="saraCoins" style="color:#FFF; margin-left:3px;">50</strong> Sara
+              </div>
+
+              <!-- Controles de Audio y Visuales -->
+              <button id="toggleSoundBtn" class="topbar-btn" style="padding:6px 10px; font-size:13px;" title="Activar/Desactivar Sonido">🔊</button>
+              <button id="toggleMusicBtn" class="topbar-btn" style="padding:6px 10px; font-size:13px;" title="Música Pentatónica Andina">🎵</button>
+              <button id="toggleThemeBtn" class="topbar-btn" style="padding:6px 10px; font-size:13px;" title="Cambiar Tapete de Mesa">🎨</button>
+              <button id="toggleTileMaterialBtn" class="topbar-btn" style="padding:6px 10px; font-size:13px;" title="Material de Fichas (Marfil / Obsidiana)">🀄</button>
+              <button id="toggleFullscreenBtn" class="topbar-btn" style="padding:6px 10px; font-size:13px;" title="Pantalla Completa">⛶</button>
+            </div>
+          </div>
+
+          <!-- Pestañas de Navegación del Juego -->
+          <div style="display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px;">
+            <button class="nav-tab active" onclick="openModal('game')">🎮 Mesa de Juego</button>
+            <button id="toggleModesHubBtn" class="nav-tab" onclick="toggleGameModesHub()">🗂️ Ver Modalidades</button>
+            <button class="nav-tab" onclick="openModal('levelsModal')">🏆 Niveles (1 al 6)</button>
+            <button class="nav-tab" onclick="openModal('vocabModal')">📖 Diccionario Inga</button>
+            <button class="nav-tab" onclick="openModal('teacherModal')">👩‍🏫 Panel Pedagógico</button>
+            <button class="nav-tab" style="background: linear-gradient(135deg, #12B5CB 0%, #0A6D7B 100%); color:white;" onclick="openQrModal()">📱 Multijugador QR</button>
+          </div>
+
+          <!-- HUB DE MODALIDADES CON TARJETAS VISUALES INTERACTIVAS -->
+          <div id="gameModesHubContainer" class="game-modes-hub" style="display: none;">
+            <!-- Tarjeta 1: Duelo vs Sabio Kindi -->
+            <div class="mode-card">
+              <div>
+                <div class="mode-card-header">
+                  <div class="mode-card-icon">🐦</div>
+                  <div>
+                    <h5 class="mode-card-title">Duelo vs Sabio Kindi</h5>
+                    <span class="mode-card-badge">Inteligencia Artificial Adaptativa</span>
+                  </div>
+                </div>
+                <p class="mode-card-desc">
+                  Enfréntate al sabio tutor andino. Aprende palabras en lengua Inga turno por turno con retroalimentación inmediata.
+                </p>
+              </div>
+              <button type="button" class="mode-card-btn" style="background: linear-gradient(135deg, #7A1F3D 0%, #4A0E21 100%); color: #FFE58F;" onclick="activateGameMode('duelo')">
+                <span>Jugar Duelo Kindi</span> <span>➔</span>
+              </button>
+            </div>
+
+            <!-- Tarjeta 2: Práctica Libre / Solitario -->
+            <div class="mode-card">
+              <div>
+                <div class="mode-card-header">
+                  <div class="mode-card-icon">🧘</div>
+                  <div>
+                    <h5 class="mode-card-title">Modo Solitario / Práctica</h5>
+                    <span class="mode-card-badge">Estudio sin Presión de Tiempo</span>
+                  </div>
+                </div>
+                <p class="mode-card-desc">
+                  Conecta las fichas a tu propio ritmo. Ideal para estudiantes que inician en el vocabulario Inga y fonética andina.
+                </p>
+              </div>
+              <button type="button" class="mode-card-btn" style="background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%); color: #FFF;" onclick="activateGameMode('solitario')">
+                <span>Practicar a Mi Ritmo</span> <span>➔</span>
+              </button>
+            </div>
+
+            <!-- Tarjeta 3: Multijugador QR en Vivo -->
+            <div class="mode-card">
+              <div>
+                <div class="mode-card-header">
+                  <div class="mode-card-icon">📱</div>
+                  <div>
+                    <h5 class="mode-card-title">Multijugador QR en el Aula</h5>
+                    <span class="mode-card-badge">Conexión Celulares & Tablets</span>
+                  </div>
+                </div>
+                <p class="mode-card-desc">
+                  Crea una sala instantánea y comparte el código QR o PIN con tus compañeros de clase para competir en vivo.
+                </p>
+              </div>
+              <button type="button" class="mode-card-btn" style="background: linear-gradient(135deg, #00ADB5 0%, #0E7490 100%); color: #FFF;" onclick="activateGameMode('qr')">
+                <span>Abrir Mesa QR</span> <span>➔</span>
+              </button>
+            </div>
+
+            <!-- Tarjeta 4: Niveles Pedagógicos -->
+            <div class="mode-card">
+              <div>
+                <div class="mode-card-header">
+                  <div class="mode-card-icon">🏆</div>
+                  <div>
+                    <h5 class="mode-card-title">Niveles Curriculares (1 al 6)</h5>
+                    <span class="mode-card-badge">Progresión Pedagógica</span>
+                  </div>
+                </div>
+                <p class="mode-card-desc">
+                  Avanza desde palabras básicas (Sara, Inti, Nina) hasta conceptos de cosmovisión y naturaleza andina.
+                </p>
+              </div>
+              <button type="button" class="mode-card-btn" style="background: linear-gradient(135deg, #D97706 0%, #B45309 100%); color: #FFF;" onclick="activateGameMode('levels')">
+                <span>Seleccionar Nivel</span> <span>➔</span>
+              </button>
+            </div>
+
+            <!-- Tarjeta 5: Diccionario Fonético -->
+            <div class="mode-card">
+              <div>
+                <div class="mode-card-header">
+                  <div class="mode-card-icon">📖</div>
+                  <div>
+                    <h5 class="mode-card-title">Diccionario Fonético Andino</h5>
+                    <span class="mode-card-badge">Pronunciación con Audio</span>
+                  </div>
+                </div>
+                <p class="mode-card-desc">
+                  Consulta todas las fichas con su escritura Inga, fonética entre corchetes, traducción al español y audio.
+                </p>
+              </div>
+              <button type="button" class="mode-card-btn" style="background: linear-gradient(135deg, #475569 0%, #334155 100%); color: #FFF;" onclick="activateGameMode('vocab')">
+                <span>Explorar Diccionario</span> <span>➔</span>
+              </button>
+            </div>
+
+            <!-- Tarjeta 6: Panel de Seguimiento -->
+            <div class="mode-card">
+              <div>
+                <div class="mode-card-header">
+                  <div class="mode-card-icon">👩‍🏫</div>
+                  <div>
+                    <h5 class="mode-card-title">Panel de Progreso Pedagógico</h5>
+                    <span class="mode-card-badge">Estadísticas y Aciertos</span>
+                  </div>
+                </div>
+                <p class="mode-card-desc">
+                  Revisa la precisión porcentual, partidas jugadas, historial y auditoría de partidas guardadas en SQLite.
+                </p>
+              </div>
+              <button type="button" class="mode-card-btn" style="background: linear-gradient(135deg, #16A34A 0%, #15803D 100%); color: #FFF;" onclick="activateGameMode('pedagogico')">
+                <span>Ver Estadísticas</span> <span>➔</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Arena de la Mesa de Dominó (Tapete + Atril + Lateral) -->
+          <div class="domino-game-grid">
+            
+            <!-- Columna Principal: Mesa Tradicional de Dominó -->
+            <div class="domino-arena">
+              <div class="domino-table-wrapper">
+                <div class="domino-felt">
+
+                  <!-- Oponente Superior: Sabio Kindi o Compañero Inalámbrico -->
+                  <div id="opponentBar" class="opponent-bar">
+                    <div class="opponent-profile">
+                      <span class="opponent-avatar">🐦</span>
+                      <span>Sabio Kindi (Rival Tutor)</span>
+                    </div>
+                    <div class="opponent-tiles-rack">
+                      <span id="botTileCount" style="font-weight: 700; font-size: 12px; margin-right: 4px;">5 fichas</span>
+                      <div id="opponentRack" style="display: flex; gap: 4px;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Cadena Central de Fichas Conectadas en la Mesa -->
+                  <div id="chainScrollArea" class="chain-scroll-container">
+                    <div id="chain" class="chain"></div>
+                  </div>
+
+                  <!-- Atril de Madera Noble del Jugador -->
+                  <div class="player-rack-container">
+                    <div class="rack-header">
+                      <h3 id="rackPlayerTitle">🀄 Atril de Jugador</h3>
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <span id="handCount" style="font-size: 12px; font-weight: 700; color: #FFE58F;">5 fichas</span>
+                        <button id="sortHandBtn" class="button sm outline" style="color:#FFF; border-color:rgba(255,255,255,0.4); padding:4px 10px; font-size:11px;">
+                          🗂️ Ordenar
+                        </button>
+                      </div>
+                    </div>
+                    <div class="rack-slot">
+                      <div id="hand" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; width: 100%;"></div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Barra de Controles de Partida -->
+              <div class="game-controls-bar" style="background: var(--bf-surface); border: 1px solid var(--bf-border); border-radius: 14px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <div class="game-controls-actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <button id="draw" class="button">
+                    <span>🀄 Robar del Pozo</span>
+                    <span class="badge-pill" id="deckCount" style="background: rgba(0,0,0,0.3); color:#FFF; padding:2px 8px; font-size:12px;">14</span>
+                  </button>
+                  <button id="passTurn" class="button secondary" style="display: none;">
+                    <span>⏭️ Pasar Turno</span>
+                  </button>
+                  <button id="newGame" class="button wood-btn">
+                    <span>🔄 Nueva Partida</span>
+                  </button>
+                  <button id="toggleBotBtn" class="button secondary">
+                    <span>🐦 Modo: Duelo vs Sabio Kindi</span>
+                  </button>
+                  <button type="button" class="button" style="background: linear-gradient(135deg, #12B5CB 0%, #0A6D7B 100%);" onclick="openQrModal()">
+                    <span>📱 Multijugador QR</span>
+                  </button>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span id="gameModeBadge" class="badge-pill" style="background: rgba(0, 173, 181, 0.15); color: #00E8D7; border: 1px solid rgba(0, 173, 181, 0.3);">
+                    Duelo vs Sabio Kindi
+                  </span>
+                  <div id="status" class="status-turn-pulse" style="font-weight: 700; font-size: 13px; color: #FFFFFF; padding: 6px 14px; background: rgba(11, 25, 44, 0.7); border-radius: 8px; border: 1px solid var(--bf-border);">
+                    Tu turno
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna Derecha: Tarjeta de Estudio y Perfil -->
+            <div class="sidebar study-card-wrapper">
+              <!-- Tarjeta Pedagógica con Carrusel Dinámico y Rotación Continua de Imágenes -->
+              <div class="card learn" id="pedagogiaCard" style="background: var(--bf-surface); border: 1px solid var(--bf-border); border-radius: 16px; position: relative; overflow: hidden;">
+                <!-- Barra de progreso visual de rotación continua -->
+                <div class="learn-timer-bar-wrap">
+                  <div id="learnTimerProgress" class="learn-timer-bar"></div>
+                </div>
+
+                <div class="learn-header">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="eyebrow" style="color: var(--bf-accent); margin: 0; font-weight: 800;">Pedagogía Inga</span>
+                    <span id="learnCounterBadge" class="learn-counter-pill">1 / 14</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 5px;">
+                    <button id="learnPrevBtn" class="learn-nav-btn" title="Concepto anterior" type="button">◀</button>
+                    <button id="learnPauseToggleBtn" class="learn-nav-btn" title="Pausar / Reanudar rotación automática" type="button">⏸</button>
+                    <button id="learnNextBtn" class="learn-nav-btn" title="Siguiente concepto" type="button">▶</button>
+                    <button id="speakWordBtn" class="learn-speaker-btn" title="Escuchar pronunciación" type="button">🔊</button>
+                  </div>
+                </div>
+
+                <div class="word-display" id="learnDisplayContainer" style="background: rgba(11, 25, 44, 0.65); border: 1px solid var(--bf-border); border-radius: 14px; position: relative; overflow: hidden; padding: 14px 10px; margin: 10px 0;">
+                  <!-- Escaparate de Imagen / Ilustración Representativa -->
+                  <div class="learn-visual-showcase">
+                    <div id="learnIcon" class="learn-icon-display">🐕</div>
+                    <span id="learnBadgeValue" class="learn-badge-val" style="background-color: #8B002B;">Valor 0 · Blanco</span>
+                  </div>
+
+                  <h2 id="learnWord" class="word" style="color: #38BDF8; font-size: 2.1rem; font-weight: 900; margin: 4px 0 2px;">ALKU</h2>
+                  <span id="learnPhonetic" class="phonetic" style="color: #00E8D7; font-size: 0.96rem; font-weight: 700;">[ahl-koo]</span>
+                  <p id="learnTranslation" class="translation-large" style="color: #F1F5F9; font-size: 1.18rem; font-weight: 700; margin: 4px 0 0;">Perro</p>
+                </div>
+
+                <div id="learnFact" class="learn-fact" style="background: rgba(255, 198, 41, 0.08); border-left: 4px solid #FFC629; color: #E2E8F0; font-size: 0.84rem; line-height: 1.4; padding: 10px 14px; border-radius: 0 10px 10px 0; margin: 10px 0 4px;">
+                  <strong>ANIMALES Y GUARDIANES:</strong> En la comunidad Inga, ALKU es el leal guardián del hogar, protector de la chagra familiar y compañero en los senderos andinos.
+                </div>
+              </div>
+
+              <!-- Perfil del Jugador y Compatibilidad -->
+              <div class="card" style="background: var(--bf-surface); border: 1px solid var(--bf-border); border-radius: 16px; padding: 14px 18px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="profileAvatarDisplay" style="font-size: 22px; background: rgba(0, 173, 181, 0.2); padding: 4px; border-radius: 8px;">🦅</span>
+                    <div>
+                      <div id="profileNameDisplay" style="font-weight: 800; font-size: 13.5px; color: #FFF;">Jugador 1</div>
+                      <div id="profileLevelDisplay" style="font-size: 11px; color: var(--bf-text-muted);">1 - Shuk</div>
+                    </div>
+                  </div>
+                  <button type="button" class="topbar-btn" style="padding: 4px 8px; font-size: 11px;" onclick="openModal('rulesModal')">❓ Reglas</button>
+                </div>
+
+                <!-- Nodos de compatibilidad para Bluetooth / Multijugador sin romper referencias -->
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <button id="btStatusBtn" class="topbar-btn" style="flex: 1; padding: 5px 8px; font-size: 11px; justify-content: center;" onclick="openQrModal()">
+                    <span id="btStatusText">📶 Multijugador</span>
+                  </button>
+                  <button id="btDisconnectBtn" class="topbar-btn" style="display: none; padding: 5px 8px; font-size: 11px; color: #F87171;" onclick="handleDisconnectBluetooth()">
+                    ✕
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- SECCIÓN 10B: ALIAS STUDENT WORKSPACE (Redirige a la mesa de dominó) -->
+        <section id="section-student-workspace" class="saas-panel-section" style="display: none;">
+          <script>
+            // Redirección inmediata a la mesa de juego activa
+            if (typeof switchSection === 'function') switchSection('domino-game');
+          </script>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- 3. MODALES DE GESTIÓN ADMINISTRATIVA -->
+  <!-- ====================================================================== -->
+
+  <!-- MODAL: CONTROL DE DEMO (120 MINUTOS) -->
+  <div id="demoControlModal" class="saas-modal-backdrop">
+    <div class="saas-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Control de Prueba DEMO (Servidor)</h3>
+        <button class="modal-close-btn" onclick="closeModal('demoControlModal')">&times;</button>
+      </div>
+      <input type="hidden" id="demoModalUserId">
+      <p style="font-size: 13.5px; color: var(--bf-text-muted); margin-bottom: 16px;">
+        Gestionar la prueba de 120 minutos para: <strong id="demoModalUserName" style="color:#FFF;"></strong> (<span id="demoModalUserEmail" style="color:var(--bf-accent);"></span>)
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="topbar-btn" style="justify-content: flex-start; padding: 12px;" onclick="applyDemoAction('extend', 30)">
+          <span>⏱️</span>
+          <div>
+            <div style="font-weight: 700;">Ampliar +30 Minutos</div>
+            <small style="color:var(--bf-text-dim);">Añade 30 minutos al vencimiento actual</small>
+          </div>
+        </button>
+
+        <button class="topbar-btn" style="justify-content: flex-start; padding: 12px;" onclick="applyDemoAction('renew', 120)">
+          <span>🔄</span>
+          <div>
+            <div style="font-weight: 700;">Renovar Prueba Completa (120 Minutos)</div>
+            <small style="color:var(--bf-text-dim);">Reinicia el temporizador de 2 horas desde ahora</small>
+          </div>
+        </button>
+
+        <button class="topbar-btn" style="justify-content: flex-start; padding: 12px; border-color: var(--bf-danger); color: #F87171;" onclick="applyDemoAction('cancel')">
+          <span>🛑</span>
+          <div>
+            <div style="font-weight: 700;">Finalizar / Cancelar DEMO</div>
+            <small style="color:var(--bf-text-dim);">Bloquea de inmediato el acceso al período de prueba</small>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ASIGNAR SUSCRIPCIÓN / LICENCIA -->
+  <div id="assignSubscriptionModal" class="saas-modal-backdrop">
+    <div class="saas-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Asignar Licencia / Suscripción Estudiantil</h3>
+        <button class="modal-close-btn" onclick="closeModal('assignSubscriptionModal')">&times;</button>
+      </div>
+      <form onsubmit="handleAssignSubSubmit(event)">
+        <input type="hidden" id="subModalUserId">
+        <p style="font-size: 13.5px; color: var(--bf-text-muted); margin-bottom: 16px;">
+          Asignando plan para: <strong id="subModalUserName" style="color:#FFF;"></strong>
+        </p>
+
+        <div class="auth-form-group">
+          <label>Plan de Licencia</label>
+          <select id="subPlanSelect" class="auth-input" style="padding-left:14px;">
+            <option value="LICENCIA_ESTUDIANTIL">Licencia Estudiantil Mensual ($15.00 USD)</option>
+            <option value="LICENCIA_PRO_MENSUAL">Licencia PRO Docente / Aula ($49.00 USD)</option>
+            <option value="CAMPUS_ANUAL">Licencia Campus Anual ($490.00 USD)</option>
+            <option value="PERSONALIZADO">Plan Personalizado</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="auth-form-group">
+            <label>Duración (Meses)</label>
+            <select id="subDurationSelect" class="auth-input" style="padding-left:14px;">
+              <option value="1">1 Mes (30 días)</option>
+              <option value="3">3 Meses (90 días)</option>
+              <option value="6">6 Meses (180 días)</option>
+              <option value="12">1 Año Escolar (365 días)</option>
+            </select>
+          </div>
+          <div class="auth-form-group">
+            <label>Monto (USD)</label>
+            <input type="number" id="subAmountInput" class="auth-input" style="padding-left:14px;" value="15.00" step="0.01">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary-bf" style="margin-top: 14px;">
+          <span>Activar Licencia en Servidor</span>
+          <span>💳</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- 4. PANTALLA INELUDIBLE DE BLOQUEO POR DEMO DE 120 MINUTOS VENCIDO -->
+  <!-- ====================================================================== -->
+  <div id="demoLockOverlay" class="demo-lock-overlay" style="display: none;">
+    <div class="demo-lock-box">
+      <div class="lock-icon">⏱️</div>
+      <h2 class="lock-title">Período DEMO Estudiantil Finalizado</h2>
+      <p class="lock-description">
+        Tu prueba gratuita ha concluido según el registro autoritativo del servidor.<br><br>
+        Para continuar utilizando <strong>PUGLLAI INGA SIMIPI UIAIKUNA</strong> y acceder a todas las actividades pedagógicas, solicita la activación de una licencia a tu <strong>Docente</strong> o comunícate con el Administrador.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn-primary-bf" onclick="alert('Tu solicitud ha sido remitida a tu Docente y a la Administración de PUGLLAI INGA SIMIPI UIAIKUNA.')">
+          <span>Solicitar Licencia a mi Docente</span>
+          <span>📩</span>
+        </button>
+        <button class="topbar-btn" style="justify-content: center;" onclick="logout()">
+          <span>Cerrar Sesión / Cambiar de Cuenta</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- 4B. MODALES PEDAGÓGICOS Y MULTIJUGADOR DEL DOMINÓ EN LENGUA INGA -->
+  <!-- ====================================================================== -->
+
+  <!-- Canvas de Confeti para Celebraciones de Victoria -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- MODAL: NIVELES PEDAGÓGICOS (1 AL 6) -->
+  <div id="levelsModal" class="modal-overlay">
+    <div class="modal-window" style="max-width: 960px;">
+      <div class="modal-header">
+        <h3>🏆 Niveles Pedagógicos de Aprendizaje Inga (1 al 6)</h3>
+        <button class="modal-close-btn" onclick="closeModal('levelsModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--muted); margin-bottom:16px;">Selecciona el nivel curricular según la edad o el avance pedagógico del estudiante. Cada nivel incluye su propia baraja equilibrada de 28 fichas:</p>
+        <div id="levelsContainer" class="levels-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DICCIONARIO FONÉTICO INGA -->
+  <div id="vocabModal" class="modal-overlay">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3>📖 Diccionario Pedagógico Inga - Español</h3>
+        <button class="modal-close-btn" onclick="closeModal('vocabModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--muted); margin-bottom:16px;">Vocabulario oficial con fonética andina y pronunciación en audio:</p>
+        <div id="vocabDictionaryContainer" class="vocab-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SEGUIMIENTO PEDAGÓGICO DEL DOCENTE -->
+  <div id="teacherModal" class="modal-overlay">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3>👩‍🏫 Panel de Seguimiento Pedagógico</h3>
+        <button class="modal-close-btn" onclick="closeModal('teacherModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="kpi-grid" style="margin-bottom:16px;">
+          <div class="kpi-card">
+            <div class="kpi-header"><span class="kpi-title">Partidas Jugadas</span><div>🎮</div></div>
+            <div id="teacherTotalMatches" class="kpi-value">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header"><span class="kpi-title">Precisión Media</span><div>🎯</div></div>
+            <div id="teacherAvgAccuracy" class="kpi-value">0%</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header"><span class="kpi-title">Puntuación Máxima</span><div>⭐</div></div>
+            <div id="teacherHighScore" class="kpi-value">0 pts</div>
+          </div>
+        </div>
+        <h4 style="color:var(--wine); margin-bottom:8px;">Historial de Partidas Recientes:</h4>
+        <div style="overflow-x:auto;">
+          <table class="sql-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Modo</th>
+                <th>Nivel</th>
+                <th>Puntos</th>
+                <th>Precisión</th>
+                <th>Resultado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="matchesTableBody"></tbody>
+          </table>
+        </div>
+        <h4 style="color:var(--wine); margin-top:16px; margin-bottom:8px;">Auditoría de Base de Datos SQLite:</h4>
+        <pre id="sqlPreviewBlock" class="sql-code-block"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MULTIJUGADOR QR Y ENLACE DIRECTO -->
+  <div id="qrModal" class="modal-overlay">
+    <div class="modal-window" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3>📱 Multijugador en Vivo (QR y Enlace)</h3>
+        <button class="modal-close-btn" onclick="closeModal('qrModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Nombre del Jugador Anfitrión -->
+        <div style="background: rgba(18, 181, 203, 0.1); border: 1px solid rgba(18, 181, 203, 0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;">
+          <label style="display:block; font-size:12px; font-weight:800; color:var(--wine); text-transform:uppercase; margin-bottom:6px;">
+            👤 Tu Nombre en la Mesa:
+          </label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="hostPlayerNameInput" class="auth-input" style="flex:1; padding:8px 12px;" placeholder="Tu nombre o apodo">
+            <button type="button" class="button sm secondary" onclick="updateHostNameAndQr()">Guardar</button>
+          </div>
+        </div>
+
+        <!-- Código QR para Escaneo con Celular/Tablet -->
+        <div style="text-align:center; padding:16px; background:#FFF; border-radius:12px; border:2px dashed #E2D8D8; margin-bottom:16px;">
+          <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">
+            Apunta la cámara de tu celular, tablet o comparte con tu compañero para entrar de inmediato:
+          </p>
+          <div id="qrCanvasContainer" style="min-height:200px; display:flex; align-items:center; justify-content:center;"></div>
+          
+          <div style="margin-top:14px; background:#FFF9F1; border:1px solid #FFE58F; border-radius:8px; padding:10px;">
+            <div style="font-size:11px; font-weight:800; color:var(--wine); text-transform:uppercase;">PIN DE LA MESA:</div>
+            <div id="qrPinDisplay" style="font-size:24px; font-weight:900; color:var(--wine); letter-spacing:2px;">BT-****</div>
+            <div id="qrUrlDisplay" style="font-size:11px; color:#6B5F68; word-break:break-all; margin-top:4px;"></div>
+          </div>
+
+          <div style="display:flex; gap:8px; justify-content:center; margin-top:12px;">
+            <button type="button" class="button sm secondary" onclick="copyQrLink()">📋 Copiar Enlace</button>
+            <button type="button" class="button sm outline" onclick="generateNewQrRoom()">🔄 Nueva Mesa (PIN)</button>
+          </div>
+        </div>
+
+        <!-- Opción: Unirse a otra Mesa existente -->
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:14px;">
+          <h4 style="font-size:13px; font-weight:800; color:var(--wine); margin:0 0 8px;">¿Quieres unirte a la mesa de otro compañero?</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:8px;">
+            <input type="text" id="joinPlayerNameInput" class="auth-input" style="padding:8px 12px; font-size:12px;" placeholder="Tu Nombre">
+            <input type="text" id="joinRoomPinInput" class="auth-input" style="padding:8px 12px; font-size:12px; text-transform:uppercase;" placeholder="PIN ej: BT-4821">
+            <button type="button" class="button sm" onclick="handleJoinWirelessRoom()">Conectar ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AUTO-UNIÓN TRAS ESCANEAR QR EN CELULAR -->
+  <div id="quickJoinModal" class="modal-overlay">
+    <div class="modal-window" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3>👋 ¡Bienvenido a la Mesa!</h3>
+        <button class="modal-close-btn" onclick="closeModal('quickJoinModal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align:center;">
+        <p style="font-size:14px; color:var(--ink); margin-bottom:14px;">
+          Has escaneado el código QR de la mesa. Escribe tu nombre para entrar a jugar:
+        </p>
+        <input type="text" id="quickJoinNameInput" class="auth-input" style="padding:10px 14px; margin-bottom:14px; text-align:center; font-weight:700;" placeholder="Tu Nombre">
+        <button type="button" class="button" style="width:100%; justify-content:center;" onclick="confirmQuickJoin()">
+          Entrar a la Partida 🎮
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CELEBRACIÓN DE VICTORIA / FIN DE PARTIDA -->
+  <div id="winModal" class="modal-overlay">
+    <div class="win-celebration-card">
+      <div id="winModalIcon" style="font-size: 64px; line-height: 1; margin-bottom: 12px; filter: drop-shadow(0 0 16px rgba(255, 198, 41, 0.6));">🏆</div>
+      <h2 id="winModalTitle" style="font-size: 26px; font-weight: 900; color: #FFE58F; margin-bottom: 10px; font-family: var(--font-heading);">🎉 ¡Sumak! ¡Victoria!</h2>
+      <p id="winModalMessage" style="font-size: 15px; color: #E2E8F0; line-height: 1.5; margin-bottom: 16px;">Has completado la mesa con éxito.</p>
+      <div id="winModalScore" style="display: inline-block; background: rgba(0, 173, 181, 0.2); border: 1px solid rgba(0, 173, 181, 0.4); border-radius: 12px; padding: 10px 20px; font-weight: 800; font-size: 15px; color: #00E8D7; margin-bottom: 24px;">
+        Puntaje final: 0 puntos (100% de precisión)
+      </div>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button type="button" class="button" style="background: linear-gradient(135deg, #FFC629 0%, #D49B00 100%); color: #1A0D1B; font-weight: 800; padding: 12px 24px;" onclick="closeModal('winModal'); if (typeof initGame === 'function') initGame();">
+          🔄 Jugar Otra Partida
+        </button>
+        <button type="button" class="button secondary" style="padding: 12px 20px;" onclick="closeModal('winModal');">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REGLAS Y PEDAGOGÍA DEL DOMINÓ INGA -->
+  <div id="rulesModal" class="modal-overlay">
+    <div class="modal-window" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>📖 Reglas y Mecánicas del Dominó Inga</h3>
+        <button class="modal-close-btn" onclick="closeModal('rulesModal')">&times;</button>
+      </div>
+      <div class="modal-body" style="line-height: 1.6; color: var(--bf-text-muted); font-size: 13.5px;">
+        <div style="background: rgba(0, 173, 181, 0.1); border: 1px solid rgba(0, 173, 181, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+          <h4 style="margin: 0 0 6px; color: #00E8D7; font-size: 15px;">🎯 Objetivo Pedagógico</h4>
+          <p style="margin: 0; color: #F1F5F9;">
+            Conectar las fichas del atril en los extremos de la mesa haciendo coincidir el <strong>concepto en lengua Inga</strong> con su correspondiente <strong>traducción al español</strong> (o viceversa). ¡El primero en agotar sus fichas o con menor puntuación restante gana!
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div style="background: var(--bf-surface); border: 1px solid var(--bf-border); border-radius: 12px; padding: 12px;">
+            <div style="font-weight: 800; color: #FFE58F; margin-bottom: 4px;">🀄 Robar del Pozo</div>
+            <p style="margin: 0; font-size: 12.5px;">Si no tienes ninguna ficha jugable para los extremos abiertos, presiona el botón <strong>Robar del Pozo</strong> para conseguir una ficha adicional.</p>
+          </div>
+          <div style="background: var(--bf-surface); border: 1px solid var(--bf-border); border-radius: 12px; padding: 12px;">
+            <div style="font-weight: 800; color: #FFE58F; margin-bottom: 4px;">🔊 Pronunciación Andina</div>
+            <p style="margin: 0; font-size: 12.5px;">Al colocar una ficha o pulsar el icono del altavoz, escucharás la pronunciación fonética nativa para fijar el aprendizaje auditivo.</p>
+          </div>
+        </div>
+
+        <div style="background: rgba(255, 198, 41, 0.1); border-left: 4px solid #FFC629; border-radius: 0 10px 10px 0; padding: 12px 16px; margin-bottom: 16px;">
+          <strong style="color: #FFC629;">💡 Tip Multidispositivo:</strong> Puedes jugar cómodamente con una sola mano en celulares. Si deseas mayor amplitud en la mesa, gira tu dispositivo a modo horizontal o usa una tablet/computador.
+        </div>
+
+        <button type="button" class="button" style="width: 100%; justify-content: center;" onclick="closeModal('rulesModal')">
+          ¡Entendido, vamos a jugar! 🎮
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- 5. SCRIPTS DEL SISTEMA -->
+  <!-- ====================================================================== -->
+  <script src="js/bookforce.js?v=2.4"></script>
+
+  <!-- Scripts del juego interactivo tradicional (preservado e integrado) -->
+  <script src="js/vocabulary.js?v=2.4"></script>
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/bluetooth.js"></script>
+  <script src="js/game.js?v=2.4"></script>
+  <script src="js/app.js?v=2.4"></script>
+
+  <script>
+    // Conector entre UI de BOOKFORCE y Juego Interactivo
+    function toggleDominoGameView(show) {
+      const container = document.getElementById('dominoGameEmbeddedContainer');
+      if (container) {
+        container.style.display = show ? 'block' : 'none';
+        if (show && typeof initGame === 'function') {
+          try { initGame(); } catch (_) {}
+        }
+      }
+    }
+
+    function openGameModal(modalId) {
+      if (typeof openModal === 'function') {
+        openModal(modalId);
+      }
+    }
+
+    async function handleAdminCreateUser(e) {
+      if (e) e.preventDefault();
+      const nombre = document.getElementById('adminNewUserName').value.trim();
+      const email = document.getElementById('adminNewUserEmail').value.trim();
+      const password = document.getElementById('adminNewUserPass').value;
+      const rolId = document.getElementById('adminNewUserRole').value;
+      const empresa = document.getElementById('adminNewUserCompany').value.trim();
+      const tipoAcceso = document.getElementById('adminNewUserAccessType').value;
+      const duracionDemoMin = document.getElementById('adminNewUserDemoMins').value;
+
+      try {
+        const res = await apiFetch('/api/admin/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nombre, email, password, rolId, empresa, tipoAcceso, duracionDemoMin })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(data.message, 'success');
+          switchSection('users');
+          loadUsersTable();
+        } else {
+          showToast(data.message || 'Error registrando usuario', 'error');
+        }
+      } catch (err) {
+        showToast('Error de red', 'error');
+      }
+    }
+  </script>
+</body>
+</html>
