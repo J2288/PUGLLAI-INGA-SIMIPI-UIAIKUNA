@@ -1154,6 +1154,64 @@
                     </div>
                   </div>
 
+                  <!-- Banner de Extremos Activos de la Mesa (Alta Visibilidad Pedagógica) -->
+                  <div id="tableEndsBanner" class="table-ends-banner">
+                    <!-- Tarjeta Extremo Izquierdo -->
+                    <div class="end-card end-left-card" id="endLeftCard" onclick="focusChainEnd('leftEnd')" title="Extremo Izquierdo: Haz clic para enfocar en la mesa">
+                      <div class="end-card-header">
+                        <span class="end-arrow">◀</span>
+                        <span class="end-label">EXTREMO IZQUIERDO</span>
+                      </div>
+                      <div class="end-card-body">
+                        <span class="end-card-icon" id="endLeftIcon">🏷️</span>
+                        <div class="end-card-info">
+                          <div class="end-card-inga" id="endLeftInga">Mesa Vacía</div>
+                          <div class="end-card-meta">
+                            <span class="end-card-val" id="endLeftVal">Punto: -</span>
+                            <span class="end-card-es" id="endLeftEs">Inicio</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Guía Central de Jugada y Botones de Enfoque -->
+                    <div class="end-card-center" id="endCenterGuide">
+                      <div class="end-guide-badge" id="endGuideBadge">🎯 GUÍA DE JUGADA</div>
+                      <div class="end-guide-msg" id="endGuideMsg">
+                        Coloca cualquier ficha de tu atril para abrir la partida
+                      </div>
+                      <div class="end-nav-actions">
+                        <button type="button" class="end-nav-btn" onclick="focusChainEnd('leftEnd')" title="Enfocar extremo izquierdo">
+                          <span>◀ Ver Izquierda</span>
+                        </button>
+                        <button type="button" class="end-nav-btn center-btn" onclick="focusChainCenter()" title="Centrar mesa">
+                          <span>🔍 Centrar</span>
+                        </button>
+                        <button type="button" class="end-nav-btn" onclick="focusChainEnd('rightEnd')" title="Enfocar extremo derecho">
+                          <span>Ver Derecha ▶</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Tarjeta Extremo Derecho -->
+                    <div class="end-card end-right-card" id="endRightCard" onclick="focusChainEnd('rightEnd')" title="Extremo Derecho: Haz clic para enfocar en la mesa">
+                      <div class="end-card-header right-align">
+                        <span class="end-label">EXTREMO DERECHO</span>
+                        <span class="end-arrow">▶</span>
+                      </div>
+                      <div class="end-card-body right-align">
+                        <div class="end-card-info text-right">
+                          <div class="end-card-inga" id="endRightInga">Mesa Vacía</div>
+                          <div class="end-card-meta">
+                            <span class="end-card-val" id="endRightVal">Punto: -</span>
+                            <span class="end-card-es" id="endRightEs">Inicio</span>
+                          </div>
+                        </div>
+                        <span class="end-card-icon" id="endRightIcon">🏷️</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- Cadena Central de Fichas Conectadas en la Mesa -->
                   <div id="chainScrollArea" class="chain-scroll-container">
                     <div id="chain" class="chain"></div>

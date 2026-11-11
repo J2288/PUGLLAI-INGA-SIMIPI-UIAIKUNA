@@ -651,6 +651,7 @@ function playTileAtEnd(index, end) {
     }
     const oriented = orientTile(tile, rightEnd, 'rightEnd');
     chain.push(oriented);
+    setTimeout(() => focusChainEnd('rightEnd'), 80);
   } else {
     const leftEnd = chain[0].left;
     if (!canConnect(tile, leftEnd)) {
@@ -659,6 +660,7 @@ function playTileAtEnd(index, end) {
     }
     const oriented = orientTile(tile, leftEnd, 'leftEnd');
     chain.unshift(oriented);
+    setTimeout(() => focusChainEnd('leftEnd'), 80);
   }
 
   selectedTileIndex = null;
@@ -752,9 +754,11 @@ function botPlayTurn() {
     if (targetEnd === 'rightEnd') {
       const rightEnd = chain[chain.length - 1].right;
       chain.push(orientTile(tile, rightEnd, 'rightEnd'));
+      setTimeout(() => focusChainEnd('rightEnd'), 80);
     } else {
       const leftEnd = chain[0].left;
       chain.unshift(orientTile(tile, leftEnd, 'leftEnd'));
+      setTimeout(() => focusChainEnd('leftEnd'), 80);
     }
 
     playSound('clack');
@@ -894,9 +898,14 @@ function render() {
     if (chain.length === 0) {
       const empty = document.createElement("p");
       empty.className = "empty";
-      empty.style.color = "rgba(255,255,255,0.8)";
+      empty.style.color = "rgba(255,255,255,0.85)";
+      empty.style.fontSize = "14px";
+      empty.style.fontWeight = "600";
       empty.textContent = "Coloca una ficha de tu atril en el centro de la mesa para abrir la partida.";
       chainContainer.append(empty);
+
+      updateTableEndsBanner(null, null, playableMoves);
+      autoAdjustBoardScale();
     } else {
       const leftEnd = chain[0].left;
       const rightEnd = chain[chain.length - 1].right;
@@ -913,9 +922,18 @@ function render() {
         }
       }
 
-      // Fichas en el tapete de fieltro
-      chain.forEach(tile => {
-        chainContainer.append(renderTile(tile, null, true));
+      // Fichas en el tapete de fieltro con identificadores de extremos libres
+      chain.forEach((tile, idx) => {
+        const tileElem = renderTile(tile, null, true);
+        if (idx === 0) {
+          tileElem.classList.add("board-tile-end-left");
+          tileElem.setAttribute("title", `Extremo Libre Izquierdo: ${leftEnd.inga} (${leftEnd.value !== undefined ? leftEnd.value : ''})`);
+        }
+        if (idx === chain.length - 1) {
+          tileElem.classList.add("board-tile-end-right");
+          tileElem.setAttribute("title", `Extremo Libre Derecho: ${rightEnd.inga} (${rightEnd.value !== undefined ? rightEnd.value : ''})`);
+        }
+        chainContainer.append(tileElem);
       });
 
       // Si hay una ficha seleccionada que coincide con el extremo derecho, mostrar botón interactivo
@@ -930,10 +948,16 @@ function render() {
         }
       }
 
+      // Actualizar Banner de Extremos de la Mesa (HUD)
+      updateTableEndsBanner(leftEnd, rightEnd, playableMoves);
+
       // Auto-ajuste de escala y vista de la mesa a medida que avanza el juego
       autoAdjustBoardScale();
     }
   }
+
+  // Activar interacciones de arrastre y scroll táctil / rueda
+  setupChainScrollInteractions();
 
   // Determinar si el jugador debe robar o pasar
   const statusEl = $("status");
@@ -961,8 +985,116 @@ function render() {
 }
 
 /**
- * Auto-ajusta la escala y la vista de la mesa de dominó a medida que el juego avanza
- * y se juegan más fichas, garantizando que toda la cadena quepa y ambos extremos se vean.
+ * Actualiza el Banner Superior de Extremos de la Mesa (HUD)
+ * con iconos grandes, nombres en lengua Inga, traducción y números oficiales
+ */
+function updateTableEndsBanner(leftEnd, rightEnd, playableMoves) {
+  const leftCard = $("endLeftCard");
+  const rightCard = $("endRightCard");
+  const guideBadge = $("endGuideBadge");
+  const guideMsg = $("endGuideMsg");
+
+  if (!leftEnd || !rightEnd || chain.length === 0) {
+    if ($("endLeftIcon")) $("endLeftIcon").textContent = "🏷️";
+    if ($("endLeftInga")) $("endLeftInga").textContent = "Mesa Vacía";
+    if ($("endLeftVal")) $("endLeftVal").textContent = "Punto: -";
+    if ($("endLeftEs")) $("endLeftEs").textContent = "Inicio";
+
+    if ($("endRightIcon")) $("endRightIcon").textContent = "🏷️";
+    if ($("endRightInga")) $("endRightInga").textContent = "Mesa Vacía";
+    if ($("endRightVal")) $("endRightVal").textContent = "Punto: -";
+    if ($("endRightEs")) $("endRightEs").textContent = "Inicio";
+
+    if (guideBadge) guideBadge.textContent = "🎯 GUÍA DE JUGADA";
+    if (guideMsg) guideMsg.textContent = "Coloca cualquier ficha de tu atril para abrir la partida.";
+    if (leftCard) leftCard.classList.remove("match-active");
+    if (rightCard) rightCard.classList.remove("match-active");
+    return;
+  }
+
+  // 1. Datos del Extremo Izquierdo
+  if ($("endLeftIcon")) $("endLeftIcon").textContent = leftEnd.icon || "🏷️";
+  if ($("endLeftInga")) $("endLeftInga").textContent = leftEnd.inga || "";
+  if ($("endLeftVal")) $("endLeftVal").textContent = `Punto: ${leftEnd.value !== undefined ? leftEnd.value : '-'}`;
+  if ($("endLeftEs")) $("endLeftEs").textContent = leftEnd.tileEs || leftEnd.es || "";
+
+  // 2. Datos del Extremo Derecho
+  if ($("endRightIcon")) $("endRightIcon").textContent = rightEnd.icon || "🏷️";
+  if ($("endRightInga")) $("endRightInga").textContent = rightEnd.inga || "";
+  if ($("endRightVal")) $("endRightVal").textContent = `Punto: ${rightEnd.value !== undefined ? rightEnd.value : '-'}`;
+  if ($("endRightEs")) $("endRightEs").textContent = rightEnd.tileEs || rightEnd.es || "";
+
+  // 3. Evaluar coincidencia con la ficha seleccionada
+  let canLeft = false;
+  let canRight = false;
+  let selTile = null;
+  if (selectedTileIndex !== null && hand[selectedTileIndex]) {
+    selTile = hand[selectedTileIndex];
+    canLeft = canConnect(selTile, leftEnd);
+    canRight = canConnect(selTile, rightEnd);
+  }
+
+  if (leftCard) leftCard.classList.toggle("match-active", canLeft);
+  if (rightCard) rightCard.classList.toggle("match-active", canRight);
+
+  // 4. Mensaje pedagógico dinámico
+  if (selTile) {
+    if (canLeft && canRight) {
+      if (guideBadge) guideBadge.textContent = "✨ ¡DOBLE COINCIDENCIA!";
+      if (guideMsg) guideMsg.innerHTML = `Tu ficha [<strong>${selTile.left.inga}</strong> | <strong>${selTile.right.inga}</strong>] coincide con ambos lados. Toca <strong>◀ Conectar</strong> o <strong>Conectar ▶</strong> en la mesa.`;
+    } else if (canLeft) {
+      if (guideBadge) guideBadge.textContent = "✅ CONEXIÓN IZQUIERDA";
+      if (guideMsg) guideMsg.innerHTML = `Tu ficha coincide con el extremo izquierdo: <strong>${leftEnd.inga} (${leftEnd.value})</strong>. Haz clic en <strong>◀ Conectar</strong>.`;
+    } else if (canRight) {
+      if (guideBadge) guideBadge.textContent = "✅ CONEXIÓN DERECHA";
+      if (guideMsg) guideMsg.innerHTML = `Tu ficha coincide con el extremo derecho: <strong>${rightEnd.inga} (${rightEnd.value})</strong>. Haz clic en <strong>Conectar ▶</strong>.`;
+    } else {
+      if (guideBadge) guideBadge.textContent = "⚠️ NO COINCIDE";
+      if (guideMsg) guideMsg.innerHTML = `Tu ficha [${selTile.left.inga} | ${selTile.right.inga}] no coincide con <strong>${leftEnd.inga}</strong> ni <strong>${rightEnd.inga}</strong>. Elige otra ficha, roba del pozo o pasa turno.`;
+    }
+  } else {
+    // Sin ficha seleccionada
+    const hasMoves = playableMoves && playableMoves.length > 0;
+    if (hasMoves) {
+      if (guideBadge) guideBadge.textContent = "🎯 EXTREMOS ABIERTOS PARA JUGAR";
+      if (guideMsg) guideMsg.innerHTML = `Busca en tu atril una ficha con: <strong>${leftEnd.inga} (${leftEnd.value})</strong> o <strong>${rightEnd.inga} (${rightEnd.value})</strong>`;
+    } else {
+      if (guideBadge) guideBadge.textContent = "⚠️ SIN JUGADA POSIBLE";
+      if (deck.length > 0) {
+        if (guideMsg) guideMsg.innerHTML = `No tienes fichas con <strong>${leftEnd.inga}</strong> ni <strong>${rightEnd.inga}</strong>. Debes <strong>Robar del Pozo</strong>.`;
+      } else {
+        if (guideMsg) guideMsg.innerHTML = `No tienes fichas con <strong>${leftEnd.inga}</strong> ni <strong>${rightEnd.inga}</strong> y el pozo está vacío. <strong>Pasa tu turno</strong>.`;
+      }
+    }
+  }
+}
+
+/**
+ * Enfoca y desplaza suavemente la mesa hacia el extremo izquierdo o derecho
+ */
+function focusChainEnd(end) {
+  const scrollArea = $("chainScrollArea");
+  if (!scrollArea) return;
+  if (end === 'leftEnd') {
+    scrollArea.scrollTo({ left: 0, behavior: 'smooth' });
+  } else if (end === 'rightEnd') {
+    scrollArea.scrollTo({ left: scrollArea.scrollWidth, behavior: 'smooth' });
+  }
+}
+
+/**
+ * Centra suavemente la vista de la mesa
+ */
+function focusChainCenter() {
+  const scrollArea = $("chainScrollArea");
+  if (!scrollArea) return;
+  const targetLeft = Math.max(0, (scrollArea.scrollWidth - scrollArea.clientWidth) / 2);
+  scrollArea.scrollTo({ left: targetLeft, behavior: 'smooth' });
+}
+
+/**
+ * Auto-ajusta la escala manteniendo SIEMPRE un tamaño amplio y legible.
+ * Las fichas NUNCA se miniaturizan para garantizar que las palabras Inga sean 100% visibles.
  */
 function autoAdjustBoardScale() {
   const scrollArea = $("chainScrollArea");
@@ -976,49 +1108,63 @@ function autoAdjustBoardScale() {
     return;
   }
 
-  // Ancho visible disponible dentro del tapete verde
-  const availableWidth = scrollArea.clientWidth - 32;
-  if (availableWidth <= 120) return;
+  // POLÍTICA DE ALTA VISIBILIDAD: escala mínima protegida (>= 0.84 desktop, 0.80 móvil)
+  let scale = 1.0;
+  if (chain.length <= 4) {
+    scale = 1.0;
+  } else if (chain.length <= 7) {
+    scale = 0.94;
+  } else if (chain.length <= 11) {
+    scale = 0.88;
+  } else {
+    scale = window.innerWidth < 640 ? 0.80 : 0.84;
+  }
 
-  // Calculamos el ancho natural de la cadena sumando el ancho de fichas y botones
-  let naturalWidth = 0;
-  chainEl.querySelectorAll('.tile.board-tile, .drop-target-btn').forEach(el => {
-    if (el.classList.contains('tile')) {
-      const isVert = el.classList.contains('vertical');
-      naturalWidth += (isVert ? 84 : 168);
-    } else if (el.classList.contains('drop-target-btn')) {
-      naturalWidth += 116;
+  chainEl.style.transform = `scale(${scale})`;
+  chainEl.style.transformOrigin = "center center";
+  chainEl.style.transition = "transform 0.25s ease";
+}
+
+/**
+ * Soporte de desplazamiento horizontal con rueda de ratón y arrastre táctil / clic
+ */
+function setupChainScrollInteractions() {
+  const scrollArea = $("chainScrollArea");
+  if (!scrollArea || scrollArea._hasScrollListeners) return;
+  scrollArea._hasScrollListeners = true;
+
+  // Desplazamiento horizontal con rueda del ratón
+  scrollArea.addEventListener("wheel", (e) => {
+    if (e.deltaY !== 0) {
+      e.preventDefault();
+      scrollArea.scrollLeft += e.deltaY * 0.9;
     }
+  }, { passive: false });
+
+  // Arrastre con clic sostenido (drag to scroll)
+  let isDown = false;
+  let startX = 0;
+  let scrollLeftPos = 0;
+
+  scrollArea.addEventListener("mousedown", (e) => {
+    if (e.target.closest('.drop-target-btn') || e.target.closest('.tile')) return;
+    isDown = true;
+    scrollArea.style.cursor = "grabbing";
+    startX = e.pageX - scrollArea.offsetLeft;
+    scrollLeftPos = scrollArea.scrollLeft;
   });
 
-  if (naturalWidth <= 0) {
-    naturalWidth = chainEl.scrollWidth || 168;
-  }
+  window.addEventListener("mouseup", () => {
+    isDown = false;
+    if (scrollArea) scrollArea.style.cursor = "grab";
+  });
 
-  // Factor de escala dinámico para que la cadena se ajuste a la pantalla
-  let scale = 1.0;
-  if (naturalWidth > availableWidth) {
-    scale = availableWidth / naturalWidth;
-    // Límite mínimo para preservar legibilidad del texto e iconos
-    const minScale = window.innerWidth < 640 ? 0.44 : 0.50;
-    scale = Math.max(minScale, Math.min(1.0, scale));
-  }
-
-  const scaleValue = Number(scale.toFixed(3));
-  chainEl.style.transform = `scale(${scaleValue})`;
-  chainEl.style.transformOrigin = "center center";
-  chainEl.style.transition = "transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1)";
-
-  // Centrar suavemente en la zona activa de la mesa
-  requestAnimationFrame(() => {
-    if (scrollArea.scrollWidth > scrollArea.clientWidth) {
-      scrollArea.scrollTo({
-        left: (scrollArea.scrollWidth - scrollArea.clientWidth) / 2,
-        behavior: 'smooth'
-      });
-    } else {
-      scrollArea.scrollLeft = 0;
-    }
+  scrollArea.addEventListener("mousemove", (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - scrollArea.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    scrollArea.scrollLeft = scrollLeftPos - walk;
   });
 }
 
@@ -2144,5 +2290,8 @@ if (typeof window !== 'undefined') {
   window.speakWord = speakWord;
   window.toggleDominoBoardVisualizer = toggleDominoBoardVisualizer;
   window.renderDominoBoard28 = renderDominoBoard28;
+  window.focusChainEnd = focusChainEnd;
+  window.focusChainCenter = focusChainCenter;
+  window.autoAdjustBoardScale = autoAdjustBoardScale;
 }
 
