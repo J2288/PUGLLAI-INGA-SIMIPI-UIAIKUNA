@@ -264,31 +264,85 @@ body {
   overflow-x: auto;
 }
 
+/* --------------------------------------------------------------------------
+   PESTAÑAS DE NAVEGACIÓN PRINCIPAL (PILL BUTTONS DE ALTA VISIBILIDAD)
+   -------------------------------------------------------------------------- */
 .nav-tab {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  border: 2px solid transparent;
-  background: transparent;
-  color: var(--ink);
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill, 9999px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  color: #FFFFFF !important;
   font-weight: 800;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   cursor: pointer;
-  transition: all 0.2s ease;
   white-space: nowrap;
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  user-select: none;
 }
 
 .nav-tab:hover {
-  background: rgba(18, 181, 203, 0.12);
-  color: var(--turquoise-dark);
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #FFFFFF !important;
+}
+
+.nav-tab:active {
+  transform: scale(0.96);
+}
+
+/* 1. Mesa de Juego */
+.nav-tab.nav-tab-game {
+  background: linear-gradient(135deg, #16A34A 0%, #15803D 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.45);
+}
+
+/* 2. Ver Modalidades */
+.nav-tab.nav-tab-modes {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.45);
+}
+
+/* 3. Niveles Curriculares */
+.nav-tab.nav-tab-levels {
+  background: linear-gradient(135deg, #D97706 0%, #B45309 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.45);
+}
+
+/* 4. Diccionario Inga */
+.nav-tab.nav-tab-vocab {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);
+}
+
+/* 5. Panel Pedagógico */
+.nav-tab.nav-tab-teacher {
+  background: linear-gradient(135deg, #8B002B 0%, #700022 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(139, 0, 43, 0.45);
+}
+
+/* 6. Multijugador QR */
+.nav-tab.nav-tab-qr {
+  background: linear-gradient(135deg, #12B5CB 0%, #0A6D7B 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(18, 181, 203, 0.45);
 }
 
 .nav-tab.active {
-  background: var(--wine);
-  color: white;
-  box-shadow: 0 4px 12px rgba(122, 31, 61, 0.35);
+  border-color: #FFC629 !important;
+  box-shadow: 0 0 14px rgba(255, 198, 41, 0.65), 0 4px 12px rgba(0, 0, 0, 0.45) !important;
 }
 
 /* --------------------------------------------------------------------------

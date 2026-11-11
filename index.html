@@ -7,8 +7,8 @@
   <meta name="description" content="Plataforma SaaS PUGLLAI INGA SIMIPI UIAIKUNA: Gestión de estudiantes, docentes, roles RBAC, control autoritativo de DEMO y administración de licencias.">
   
   <!-- Estilos Corporativos PUGLLAI INGA SIMIPI UIAIKUNA y Juego -->
-  <link rel="stylesheet" href="css/bookforce.css?v=2.5">
-  <link rel="stylesheet" href="css/styles.css?v=2.5">
+  <link rel="stylesheet" href="css/bookforce.css?v=2.6">
+  <link rel="stylesheet" href="css/styles.css?v=2.6">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 
   <!-- Chart.js para Gráficos Interactivos del Dashboard -->
@@ -1007,14 +1007,14 @@
             </div>
           </div>
 
-          <!-- Pestañas de Navegación del Juego -->
-          <div style="display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px;">
-            <button class="nav-tab active" onclick="openModal('game')">🎮 Mesa de Juego</button>
-            <button id="toggleModesHubBtn" class="nav-tab" onclick="toggleGameModesHub()">🗂️ Ver Modalidades</button>
-            <button class="nav-tab" onclick="openModal('levelsModal')">🏆 Niveles (1 al 6)</button>
-            <button class="nav-tab" onclick="openModal('vocabModal')">📖 Diccionario Inga</button>
-            <button class="nav-tab" onclick="openModal('teacherModal')">👩‍🏫 Panel Pedagógico</button>
-            <button class="nav-tab" style="background: linear-gradient(135deg, #12B5CB 0%, #0A6D7B 100%); color:white;" onclick="openQrModal()">📱 Multijugador QR</button>
+          <!-- Pestañas de Navegación del Juego (Pill Buttons de Alta Visibilidad) -->
+          <div style="display: flex; gap: 10px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 6px; align-items: center;">
+            <button class="nav-tab nav-tab-game active" style="background: linear-gradient(135deg, #16A34A 0%, #15803D 100%); color: #FFFFFF;" onclick="openModal('game')">🎮 Mesa de Juego</button>
+            <button id="toggleModesHubBtn" class="nav-tab nav-tab-modes" style="background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: #FFFFFF;" onclick="toggleGameModesHub()">🗂️ Ver Modalidades</button>
+            <button class="nav-tab nav-tab-levels" style="background: linear-gradient(135deg, #D97706 0%, #B45309 100%); color: #FFFFFF;" onclick="openModal('levelsModal')">🏆 Niveles (1 al 6)</button>
+            <button class="nav-tab nav-tab-vocab" style="background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%); color: #FFFFFF;" onclick="openModal('vocabModal')">📖 Diccionario Inga</button>
+            <button class="nav-tab nav-tab-teacher" style="background: linear-gradient(135deg, #8B002B 0%, #700022 100%); color: #FFFFFF;" onclick="openModal('teacherModal')">👩‍🏫 Panel Pedagógico</button>
+            <button class="nav-tab nav-tab-qr" style="background: linear-gradient(135deg, #12B5CB 0%, #0A6D7B 100%); color: #FFFFFF;" onclick="openQrModal()">📱 Multijugador QR</button>
           </div>
 
           <!-- HUB DE MODALIDADES CON TARJETAS VISUALES INTERACTIVAS -->
@@ -1614,14 +1614,14 @@
   <!-- ====================================================================== -->
   <!-- 5. SCRIPTS DEL SISTEMA -->
   <!-- ====================================================================== -->
-  <script src="js/bookforce.js?v=2.5"></script>
+  <script src="js/bookforce.js?v=2.6"></script>
 
   <!-- Scripts del juego interactivo tradicional (preservado e integrado) -->
-  <script src="js/vocabulary.js?v=2.5"></script>
+  <script src="js/vocabulary.js?v=2.6"></script>
   <script src="js/qrcode.min.js"></script>
   <script src="js/bluetooth.js"></script>
-  <script src="js/game.js?v=2.5"></script>
-  <script src="js/app.js?v=2.5"></script>
+  <script src="js/game.js?v=2.6"></script>
+  <script src="js/app.js?v=2.6"></script>
 
   <script>
     // Conector entre UI de BOOKFORCE y Juego Interactivo
