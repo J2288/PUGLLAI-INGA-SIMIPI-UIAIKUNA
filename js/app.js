@@ -1819,10 +1819,20 @@ function selectPlayerAvatar(avatar, btn) {
 function getMyPlayerName() {
   try {
     const saved = localStorage.getItem('domino_player_name');
-    if (saved && saved !== 'Estudiante Demo (120 min)') return saved;
+    if (saved && 
+        saved !== 'Estudiante Demo (120 min)' && 
+        saved !== 'Estudiante Demo' && 
+        saved !== 'Usuario Prueba Gratuita' && 
+        !saved.toLowerCase().includes('prueba gratuita') &&
+        !saved.toLowerCase().includes('demo')) {
+      return saved;
+    }
   } catch (_) {}
   const profDisplay = $("profileNameDisplay");
-  const fallback = (profDisplay && profDisplay.textContent) ? profDisplay.textContent.split(' ')[0] : 'Alexander';
+  let fallback = (profDisplay && profDisplay.textContent) ? profDisplay.textContent.split(' ')[0] : 'Alexander';
+  if (fallback === 'Usuario' || fallback === 'Estudiante' || fallback.toLowerCase().includes('demo') || fallback.toLowerCase().includes('prueba')) {
+    fallback = 'Alexander';
+  }
   return fallback || 'Alexander';
 }
 
@@ -1854,7 +1864,14 @@ function openPlayerNameModal() {
   const currentName = getMyPlayerName();
   const input = $("playerNameModalInput");
   if (input) {
-    input.value = (currentName && currentName !== 'Estudiante Demo' && currentName !== 'Jugador 1') ? currentName : '';
+    const isGeneric = !currentName || 
+      currentName === 'Estudiante Demo' || 
+      currentName === 'Estudiante Demo (120 min)' || 
+      currentName === 'Usuario Prueba Gratuita' || 
+      currentName.toLowerCase().includes('prueba gratuita') || 
+      currentName.toLowerCase().includes('demo') || 
+      currentName === 'Jugador 1';
+    input.value = isGeneric ? '' : currentName;
   }
   const currentAv = getMyPlayerAvatar();
   selectPlayerAvatar(currentAv);
@@ -2189,12 +2206,31 @@ function toggleTileMaterial() {
 }
 
 function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(() => {});
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {});
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    }
   } else {
-    if (document.exitFullscreen) document.exitFullscreen();
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
   }
 }
+
+// Sincronizar etiquetas de botones de pantalla completa
+['fullscreenchange', 'webkitfullscreenchange'].forEach(evt => {
+  document.addEventListener(evt, () => {
+    const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    document.querySelectorAll(".fullscreen-btn-label").forEach(el => {
+      el.textContent = isFull ? "Salir Pantalla Completa" : "Pantalla Completa";
+    });
+  });
+});
 
 function speakWordWithSpeed(rate = 1.0) {
   const word = $("learnWord") ? $("learnWord").textContent : 'iaku';
@@ -2246,8 +2282,14 @@ if (nameModalInputEl) {
   });
 }
 
-// Si es primera vez o aún tiene el nombre demo, abrir modal para que el jugador coloque su nombre
-if (!savedPlayerInitName || savedPlayerInitName === 'Estudiante Demo' || savedPlayerInitName === 'Estudiante Demo (120 min)') {
+// Si es primera vez o aún tiene el nombre demo / genérico, abrir modal para que el jugador coloque su nombre
+const isInitialGenericName = !savedPlayerInitName || 
+  savedPlayerInitName === 'Estudiante Demo' || 
+  savedPlayerInitName === 'Estudiante Demo (120 min)' || 
+  savedPlayerInitName === 'Usuario Prueba Gratuita' || 
+  savedPlayerInitName.toLowerCase().includes('prueba gratuita');
+
+if (isInitialGenericName) {
   setTimeout(() => {
     openPlayerNameModal();
   }, 400);

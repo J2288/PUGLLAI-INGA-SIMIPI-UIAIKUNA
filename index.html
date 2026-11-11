@@ -1258,6 +1258,10 @@
                   <button type="button" class="button" style="background: linear-gradient(135deg, #12B5CB 0%, #0A6D7B 100%);" onclick="openQrModal()">
                     <span>📱 Multijugador QR</span>
                   </button>
+                  <button type="button" class="button secondary" onclick="toggleFullscreen()" title="Ampliar o Salir de Pantalla Completa">
+                    <span>⛶</span>
+                    <span class="fullscreen-btn-label">Pantalla Completa</span>
+                  </button>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -1674,32 +1678,32 @@
 
   <!-- MODAL: NOMBRE DEL JUGADOR ANTES DE INICIAR LA PARTIDA -->
   <div id="playerNameModal" class="modal-overlay">
-    <div class="modal-window" style="max-width: 460px; text-align: center; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.12);">
-      <div class="modal-header" style="background: linear-gradient(135deg, #15803D 0%, #166534 100%); padding: 18px 22px;">
-        <h3 style="color:#FFF; display:flex; align-items:center; justify-content:center; gap:8px; margin:0; font-size:1.25rem;">
+    <div class="modal-window" style="max-width: 440px; width: 92%; max-height: 90vh; overflow-y: auto; overflow-x: hidden; text-align: center; border-radius: 18px; box-shadow: 0 20px 50px rgba(0,0,0,0.65); border: 2px solid rgba(255,255,255,0.15); scrollbar-width: thin; scrollbar-color: #16A34A rgba(0,0,0,0.3);">
+      <div class="modal-header" style="background: linear-gradient(135deg, #15803D 0%, #166534 100%); padding: 12px 18px;">
+        <h3 style="color:#FFF; display:flex; align-items:center; justify-content:center; gap:8px; margin:0; font-size:1.15rem;">
           <span>✨</span>
           <span>¡Alli Shamushkarimi!</span>
         </h3>
         <button class="modal-close-btn" onclick="closeModal('playerNameModal')" title="Cerrar">&times;</button>
       </div>
-      <div class="modal-body" style="padding: 24px 22px; background: #0f172a; color: #f8fafc;">
-        <div style="font-size: 3.5rem; margin-bottom: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));" id="playerNameModalAvatarPreview">🐹</div>
-        <h4 style="color: #FACC15; margin: 0 0 6px 0; font-size: 1.3rem; font-weight: 900; letter-spacing: 0.5px;">
+      <div class="modal-body" style="padding: 16px 18px; background: #0f172a; color: #f8fafc;">
+        <div style="font-size: 2.3rem; margin-bottom: 2px; filter: drop-shadow(0 3px 8px rgba(0,0,0,0.4));" id="playerNameModalAvatarPreview">🐹</div>
+        <h4 style="color: #FACC15; margin: 0 0 4px 0; font-size: 1.15rem; font-weight: 900; letter-spacing: 0.3px;">
           Escribe tu Nombre para Iniciar
         </h4>
-        <p style="color: #94A3B8; font-size: 0.88rem; margin: 0 0 18px 0; line-height: 1.4;">
+        <p style="color: #94A3B8; font-size: 0.82rem; margin: 0 0 12px 0; line-height: 1.35;">
           Personaliza tu atril y guarda tus victorias en el dominó en lengua Inga:
         </p>
 
-        <div style="margin-bottom: 16px; text-align: left;">
-          <label style="display: block; font-size: 12px; font-weight: 800; color: #E2E8F0; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
+        <div style="margin-bottom: 12px; text-align: left;">
+          <label style="display: block; font-size: 11px; font-weight: 800; color: #E2E8F0; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">
             👤 Tu Nombre o Apodo:
           </label>
-          <input type="text" id="playerNameModalInput" class="auth-input" style="width: 100%; font-size: 16px; padding: 12px 14px; font-weight: 700; border: 2px solid #334155; background: #1E293B; color: #FFFFFF; border-radius: 12px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" placeholder="Ej: Alexander, Inti, Sara..." maxlength="20" autocomplete="off" />
+          <input type="text" id="playerNameModalInput" class="auth-input" style="width: 100%; font-size: 15px; padding: 10px 12px; font-weight: 700; border: 2px solid #334155; background: #1E293B; color: #FFFFFF; border-radius: 10px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" placeholder="Ej: Alexander, Inti, Sara..." maxlength="20" autocomplete="off" />
         </div>
 
-        <div style="margin-bottom: 22px; text-align: left;">
-          <label style="display: block; font-size: 12px; font-weight: 800; color: #E2E8F0; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
+        <div style="margin-bottom: 16px; text-align: left;">
+          <label style="display: block; font-size: 11px; font-weight: 800; color: #E2E8F0; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">
             🎭 Elige tu Avatar Andino:
           </label>
           <div id="avatarSelectorGrid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
@@ -1712,7 +1716,7 @@
           </div>
         </div>
 
-        <button type="button" class="button" id="confirmPlayerNameBtn" style="width: 100%; padding: 13px 18px; font-size: 16px; font-weight: 800; background: linear-gradient(135deg, #16A34A 0%, #15803D 100%); color: #FFF; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s ease;" onclick="confirmPlayerNameAndStart()">
+        <button type="button" class="button" id="confirmPlayerNameBtn" style="width: 100%; padding: 11px 16px; font-size: 15px; font-weight: 800; background: linear-gradient(135deg, #16A34A 0%, #15803D 100%); color: #FFF; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s ease;" onclick="confirmPlayerNameAndStart()">
           <span>🎮 Comenzar Partida</span>
           <span>➔</span>
         </button>
