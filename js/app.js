@@ -1085,7 +1085,7 @@ safeOn("sortHandBtn", "click", () => {
 
 // Botón: Nueva partida
 safeOn("newGame", "click", () => {
-  startGame();
+  openPlayerNameModal();
 });
 
 // Toggle Bot / Solitario
@@ -1635,29 +1635,105 @@ async function syncServerNetworkInfo() {
 }
 syncServerNetworkInfo();
 
+let selectedAvatarEmoji = '🐹';
+
+function getMyPlayerAvatar() {
+  try {
+    const saved = localStorage.getItem('domino_player_avatar');
+    if (saved) return saved;
+  } catch (_) {}
+  return '🐹';
+}
+
+function setMyPlayerAvatar(avatar) {
+  if (!avatar) return;
+  try {
+    localStorage.setItem('domino_player_avatar', avatar);
+  } catch (_) {}
+  selectedAvatarEmoji = avatar;
+  const profAvatar = $("profileAvatarDisplay");
+  if (profAvatar) profAvatar.textContent = avatar;
+  const preview = $("playerNameModalAvatarPreview");
+  if (preview) preview.textContent = avatar;
+}
+
+function selectPlayerAvatar(avatar, btn) {
+  selectedAvatarEmoji = avatar;
+  const preview = $("playerNameModalAvatarPreview");
+  if (preview) preview.textContent = avatar;
+  document.querySelectorAll('.avatar-pick-btn').forEach(b => b.classList.remove('active'));
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    const target = document.querySelector(`.avatar-pick-btn[data-avatar="${avatar}"]`);
+    if (target) target.classList.add('active');
+  }
+}
+
 function getMyPlayerName() {
   try {
     const saved = localStorage.getItem('domino_player_name');
-    if (saved) return saved;
+    if (saved && saved !== 'Estudiante Demo (120 min)') return saved;
   } catch (_) {}
   const profDisplay = $("profileNameDisplay");
-  const fallback = (profDisplay && profDisplay.textContent) ? profDisplay.textContent.split(' ')[0] : 'Jugador 1';
-  return fallback || 'Jugador 1';
+  const fallback = (profDisplay && profDisplay.textContent) ? profDisplay.textContent.split(' ')[0] : 'Alexander';
+  return fallback || 'Alexander';
 }
 
 function setMyPlayerName(name) {
   if (!name) return;
+  // Limpiar sufijos residuales como (120 min)
+  name = name.replace(/\s*\(\d+\s*min\)/i, '').trim();
   try {
     localStorage.setItem('domino_player_name', name);
   } catch (_) {}
   const rackTitle = $("rackPlayerTitle");
   if (rackTitle) {
-    rackTitle.textContent = `Atril de ${name}`;
+    rackTitle.innerHTML = `🀄 Atril de <span style="color:#FFF;">${name}</span> <button type="button" class="rack-edit-name-btn" onclick="openPlayerNameModal()" title="Cambiar nombre del jugador">✏️ Cambiar</button>`;
   }
   const profDisplay = $("profileNameDisplay");
   if (profDisplay) {
     profDisplay.textContent = name;
   }
+  if (typeof BF !== 'undefined' && BF.user) {
+    BF.user.nombre = name;
+  }
+  const hostInput = $("hostPlayerNameInput");
+  if (hostInput) {
+    hostInput.value = name;
+  }
+}
+
+function openPlayerNameModal() {
+  const currentName = getMyPlayerName();
+  const input = $("playerNameModalInput");
+  if (input) {
+    input.value = (currentName && currentName !== 'Estudiante Demo' && currentName !== 'Jugador 1') ? currentName : '';
+  }
+  const currentAv = getMyPlayerAvatar();
+  selectPlayerAvatar(currentAv);
+  openModal('playerNameModal');
+  setTimeout(() => {
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  }, 120);
+}
+
+function confirmPlayerNameAndStart() {
+  const input = $("playerNameModalInput");
+  let chosenName = (input && input.value.trim()) ? input.value.trim() : '';
+  if (!chosenName) {
+    chosenName = 'Alexander';
+  }
+  setMyPlayerName(chosenName);
+  setMyPlayerAvatar(selectedAvatarEmoji);
+  closeModal('playerNameModal');
+  if (typeof showToast === 'function') {
+    showToast(`¡Alli Shamushka, ${chosenName}! Partida iniciada. 🎮`, 'success');
+  }
+  startGame();
 }
 
 function getValidQrUrl(pin) {
@@ -2008,9 +2084,28 @@ if ($("toggleTileMaterialBtn")) $("toggleTileMaterialBtn").addEventListener("cli
 if ($("toggleFullscreenBtn")) $("toggleFullscreenBtn").addEventListener("click", toggleFullscreen);
 
 // Iniciar partida al cargar y configurar nombre
+const savedPlayerInitName = localStorage.getItem('domino_player_name');
 setMyPlayerName(getMyPlayerName());
+setMyPlayerAvatar(getMyPlayerAvatar());
 startGame();
 updateBluetoothUI();
+
+// Event listener para Enter en input del modal de nombre
+const nameModalInputEl = $("playerNameModalInput");
+if (nameModalInputEl) {
+  nameModalInputEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      confirmPlayerNameAndStart();
+    }
+  });
+}
+
+// Si es primera vez o aún tiene el nombre demo, abrir modal para que el jugador coloque su nombre
+if (!savedPlayerInitName || savedPlayerInitName === 'Estudiante Demo' || savedPlayerInitName === 'Estudiante Demo (120 min)') {
+  setTimeout(() => {
+    openPlayerNameModal();
+  }, 400);
+}
 
 // Detección automática al abrir enlace QR en celular (?join=BT-XXXX)
 if (typeof window !== 'undefined' && window.location.search) {
@@ -2033,6 +2128,11 @@ if (typeof window !== 'undefined') {
   window.openGameModal = openModal;
   window.closeGameModal = closeModal;
   window.openQrModal = openQrModal;
+  window.openPlayerNameModal = openPlayerNameModal;
+  window.confirmPlayerNameAndStart = confirmPlayerNameAndStart;
+  window.selectPlayerAvatar = selectPlayerAvatar;
+  window.setMyPlayerAvatar = setMyPlayerAvatar;
+  window.getMyPlayerAvatar = getMyPlayerAvatar;
   window.updateHostNameAndQr = updateHostNameAndQr;
   window.generateNewQrRoom = generateNewQrRoom;
   window.copyQrLink = copyQrLink;

@@ -983,6 +983,53 @@ body {
   text-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
 
+.rack-edit-name-btn {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #FFE58F;
+  border-radius: 8px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rack-edit-name-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.avatar-pick-btn {
+  font-size: 1.5rem;
+  padding: 8px 4px;
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-pick-btn:hover {
+  transform: translateY(-2px);
+  border-color: #CBD5E1;
+  background: #F1F5F9;
+}
+
+.avatar-pick-btn.active {
+  border-color: #16A34A !important;
+  background: rgba(22, 163, 74, 0.12) !important;
+  box-shadow: 0 0 10px rgba(22, 163, 74, 0.35) !important;
+  transform: scale(1.08);
+}
+
 .rack-slot {
   background: linear-gradient(to bottom, #261002 0%, #3d1b06 100%);
   border-radius: 14px;

@@ -202,7 +202,8 @@ function directOpenDominoDemo(asRole = 'ESTUDIANTE') {
     BF.user = { id: 1, nombre: 'Director Administrador', email: 'admin@bookforce.com', rol: 'ADMINISTRADOR', estado: 'activo' };
     BF.access = { allowed: true, status: 'ADMINISTRADOR' };
   } else {
-    BF.user = { id: 3, nombre: 'Estudiante Demo (120 min)', email: 'demo@bookforce.com', rol: 'ESTUDIANTE', estado: 'activo' };
+    const savedPlayerName = (typeof localStorage !== 'undefined') ? localStorage.getItem('domino_player_name') : null;
+    BF.user = { id: 3, nombre: savedPlayerName || 'Estudiante', email: 'demo@bookforce.com', rol: 'ESTUDIANTE', estado: 'activo' };
     BF.access = { allowed: true, status: 'DEMO ACTIVO', remainingSeconds: 120 * 60, formattedRemaining: '02:00:00' };
   }
 
@@ -454,7 +455,8 @@ function authenticateOfflineFallback(email, password) {
     user = { id: 2, nombre: 'Prof. Carlos Mendoza', email: 'docente@bookforce.com', rol: 'DOCENTE', estado: 'activo', institucion: 'Colegio Andino' };
   } else {
     // Estudiante por defecto
-    user = { id: 3, nombre: 'Estudiante Demo (120 min)', email: email || 'demo@bookforce.com', rol: 'ESTUDIANTE', estado: 'activo' };
+    const savedPlayerName = (typeof localStorage !== 'undefined') ? localStorage.getItem('domino_player_name') : null;
+    user = { id: 3, nombre: savedPlayerName || 'Estudiante', email: email || 'demo@bookforce.com', rol: 'ESTUDIANTE', estado: 'activo' };
     access = { allowed: true, status: 'DEMO ACTIVO', remainingSeconds: 120 * 60, formattedRemaining: '02:00:00' };
   }
 

@@ -1162,7 +1162,10 @@
                   <!-- Atril de Madera Noble del Jugador -->
                   <div class="player-rack-container">
                     <div class="rack-header">
-                      <h3 id="rackPlayerTitle">🀄 Atril de Jugador</h3>
+                      <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="openPlayerNameModal()" title="Clic para cambiar tu nombre o avatar">
+                        <h3 id="rackPlayerTitle">🀄 Atril de Jugador</h3>
+                        <button type="button" class="rack-edit-name-btn" onclick="openPlayerNameModal()" title="Cambiar nombre del jugador">✏️ Cambiar</button>
+                      </div>
                       <div style="display: flex; align-items: center; gap: 10px;">
                         <span id="handCount" style="font-size: 12px; font-weight: 700; color: #FFE58F;">5 fichas</span>
                         <button id="sortHandBtn" class="button sm outline" style="color:#FFF; border-color:rgba(255,255,255,0.4); padding:4px 10px; font-size:11px;">
@@ -1252,7 +1255,7 @@
               <!-- Perfil del Jugador y Compatibilidad -->
               <div class="card" style="background: var(--bf-surface); border: 1px solid var(--bf-border); border-radius: 16px; padding: 14px 18px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="openPlayerNameModal()" title="Clic para cambiar tu nombre o avatar">
                     <span id="profileAvatarDisplay" style="font-size: 22px; background: rgba(0, 173, 181, 0.2); padding: 4px; border-radius: 8px;">🦅</span>
                     <div>
                       <div id="profileNameDisplay" style="font-weight: 800; font-size: 13.5px; color: #FFF;">Jugador 1</div>
@@ -1606,6 +1609,54 @@
 
         <button type="button" class="button" style="width: 100%; justify-content: center;" onclick="closeModal('rulesModal')">
           ¡Entendido, vamos a jugar! 🎮
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: NOMBRE DEL JUGADOR ANTES DE INICIAR LA PARTIDA -->
+  <div id="playerNameModal" class="modal-overlay">
+    <div class="modal-window" style="max-width: 460px; text-align: center; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.12);">
+      <div class="modal-header" style="background: linear-gradient(135deg, #15803D 0%, #166534 100%); padding: 18px 22px;">
+        <h3 style="color:#FFF; display:flex; align-items:center; justify-content:center; gap:8px; margin:0; font-size:1.25rem;">
+          <span>✨</span>
+          <span>¡Alli Shamushkarimi!</span>
+        </h3>
+        <button class="modal-close-btn" onclick="closeModal('playerNameModal')" title="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 24px 22px; background: #0f172a; color: #f8fafc;">
+        <div style="font-size: 3.5rem; margin-bottom: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));" id="playerNameModalAvatarPreview">🐹</div>
+        <h4 style="color: #FACC15; margin: 0 0 6px 0; font-size: 1.3rem; font-weight: 900; letter-spacing: 0.5px;">
+          Escribe tu Nombre para Iniciar
+        </h4>
+        <p style="color: #94A3B8; font-size: 0.88rem; margin: 0 0 18px 0; line-height: 1.4;">
+          Personaliza tu atril y guarda tus victorias en el dominó en lengua Inga:
+        </p>
+
+        <div style="margin-bottom: 16px; text-align: left;">
+          <label style="display: block; font-size: 12px; font-weight: 800; color: #E2E8F0; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
+            👤 Tu Nombre o Apodo:
+          </label>
+          <input type="text" id="playerNameModalInput" class="auth-input" style="width: 100%; font-size: 16px; padding: 12px 14px; font-weight: 700; border: 2px solid #334155; background: #1E293B; color: #FFFFFF; border-radius: 12px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" placeholder="Ej: Alexander, Inti, Sara..." maxlength="20" autocomplete="off" />
+        </div>
+
+        <div style="margin-bottom: 22px; text-align: left;">
+          <label style="display: block; font-size: 12px; font-weight: 800; color: #E2E8F0; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
+            🎭 Elige tu Avatar Andino:
+          </label>
+          <div id="avatarSelectorGrid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
+            <button type="button" class="avatar-pick-btn active" data-avatar="🐹" title="Cuy (Sancha)" onclick="selectPlayerAvatar('🐹', this)">🐹</button>
+            <button type="button" class="avatar-pick-btn" data-avatar="🐦" title="Colibrí (Kindi)" onclick="selectPlayerAvatar('🐦', this)">🐦</button>
+            <button type="button" class="avatar-pick-btn" data-avatar="🐕" title="Perro Guardián (Alku)" onclick="selectPlayerAvatar('🐕', this)">🐕</button>
+            <button type="button" class="avatar-pick-btn" data-avatar="👶" title="Niña/Niño (Wawa)" onclick="selectPlayerAvatar('👶', this)">👶</button>
+            <button type="button" class="avatar-pick-btn" data-avatar="🌽" title="Maíz Sagrado (Sara)" onclick="selectPlayerAvatar('🌽', this)">🌽</button>
+            <button type="button" class="avatar-pick-btn" data-avatar="👵" title="Abuela Sabia (Mamasiñura)" onclick="selectPlayerAvatar('👵', this)">👵</button>
+          </div>
+        </div>
+
+        <button type="button" class="button" id="confirmPlayerNameBtn" style="width: 100%; padding: 13px 18px; font-size: 16px; font-weight: 800; background: linear-gradient(135deg, #16A34A 0%, #15803D 100%); color: #FFF; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s ease;" onclick="confirmPlayerNameAndStart()">
+          <span>🎮 Comenzar Partida</span>
+          <span>➔</span>
         </button>
       </div>
     </div>
