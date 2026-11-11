@@ -1220,12 +1220,12 @@
                   <!-- Atril de Madera Noble del Jugador -->
                   <div class="player-rack-container">
                     <div class="rack-header">
-                      <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="openPlayerNameModal()" title="Clic para cambiar tu nombre o avatar">
-                        <h3 id="rackPlayerTitle">🀄 Atril de Jugador</h3>
-                        <button type="button" class="rack-edit-name-btn" onclick="openPlayerNameModal()" title="Cambiar nombre del jugador">✏️ Cambiar</button>
+                      <div class="rack-player-group" onclick="openPlayerNameModal()" title="Clic para cambiar tu nombre o avatar">
+                        <h3 id="rackPlayerTitle">🀄 Atril de <span id="rackPlayerNameText">Alexander</span></h3>
+                        <button type="button" class="rack-edit-name-btn" onclick="openPlayerNameModal(); event.stopPropagation();" title="Cambiar nombre del jugador">✏️ Cambiar</button>
                       </div>
-                      <div style="display: flex; align-items: center; gap: 10px;">
-                        <span id="handCount" style="font-size: 12px; font-weight: 700; color: #FFE58F;">5 fichas</span>
+                      <div class="rack-actions-group">
+                        <span id="handCount" class="rack-count-badge">5 fichas</span>
                         <button id="sortHandBtn" class="button sm outline" style="color:#FFF; border-color:rgba(255,255,255,0.4); padding:4px 10px; font-size:11px;">
                           🗂️ Ordenar
                         </button>

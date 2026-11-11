@@ -1179,18 +1179,54 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap;
   color: white;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.rack-player-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .rack-header h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 800;
   color: var(--sun-light);
-  display: flex;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.rack-header h3 span {
+  color: #FFFFFF;
+  font-weight: 900;
+}
+
+.rack-actions-group {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  flex-shrink: 0;
+}
+
+.rack-count-badge {
+  font-size: 12px;
+  font-weight: 800;
+  color: #FFE58F;
+  background: rgba(0, 0, 0, 0.28);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  white-space: nowrap;
 }
 
 .rack-edit-name-btn {
@@ -1206,6 +1242,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .rack-edit-name-btn:hover {

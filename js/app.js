@@ -1842,16 +1842,28 @@ function getMyPlayerName() {
 }
 
 function setMyPlayerName(name) {
-  if (!name) return;
+  if (!name || 
+      name === 'Usuario Prueba Gratuita' || 
+      name.toLowerCase().includes('prueba') || 
+      name.toLowerCase().includes('demo')) {
+    name = 'Alexander';
+  }
   // Limpiar sufijos residuales como (120 min)
   name = name.replace(/\s*\(\d+\s*min\)/i, '').trim();
   try {
     localStorage.setItem('domino_player_name', name);
   } catch (_) {}
-  const rackTitle = $("rackPlayerTitle");
-  if (rackTitle) {
-    rackTitle.innerHTML = `🀄 Atril de <span style="color:#FFF;">${name}</span> <button type="button" class="rack-edit-name-btn" onclick="openPlayerNameModal()" title="Cambiar nombre del jugador">✏️ Cambiar</button>`;
+
+  const nameSpan = $("rackPlayerNameText");
+  if (nameSpan) {
+    nameSpan.textContent = name;
+  } else {
+    const rackTitle = $("rackPlayerTitle");
+    if (rackTitle) {
+      rackTitle.innerHTML = `🀄 Atril de <span id="rackPlayerNameText" style="color:#FFF;">${name}</span>`;
+    }
   }
+
   const profDisplay = $("profileNameDisplay");
   if (profDisplay) {
     profDisplay.textContent = name;
@@ -2269,6 +2281,14 @@ if ($("toggleMusicBtn")) $("toggleMusicBtn").addEventListener("click", toggleAmb
 if ($("toggleThemeBtn")) $("toggleThemeBtn").addEventListener("click", cycleTableTheme);
 if ($("toggleTileMaterialBtn")) $("toggleTileMaterialBtn").addEventListener("click", toggleTileMaterial);
 if ($("toggleFullscreenBtn")) $("toggleFullscreenBtn").addEventListener("click", toggleFullscreen);
+
+// Limpiar nombres de prueba o demo del almacenamiento local
+try {
+  const oldName = localStorage.getItem('domino_player_name');
+  if (oldName && (oldName.includes('Prueba Gratuita') || oldName.toLowerCase().includes('demo') || oldName.toLowerCase().includes('prueba'))) {
+    localStorage.removeItem('domino_player_name');
+  }
+} catch (_) {}
 
 // Iniciar partida al cargar y configurar nombre
 const savedPlayerInitName = localStorage.getItem('domino_player_name');
