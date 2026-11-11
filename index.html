@@ -972,19 +972,19 @@
           </div>
 
           <!-- Barra Superior de la Mesa: Identidad, Nivel, Racha, Puntos y Controles -->
-          <div style="background: linear-gradient(135deg, #7A1F3D 0%, #4A0E21 100%); border-radius: 16px; padding: 14px 20px; border-bottom: 4px solid #FFC629; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 28px; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 12px; border: 2px solid #FFC629;">🀄</span>
+          <div class="domino-header-bar">
+            <div class="domino-header-brand">
+              <span class="domino-header-logo">🀄</span>
               <div>
-                <h3 style="color: #FFFFFF; font-size: 17px; font-weight: 900; margin: 0; text-transform: uppercase;">
+                <h3 class="domino-header-title">
                   PUGLLAI INGA SIMIPI <span style="color:#FFC629;">UIAIKUNA</span>
                 </h3>
-                <p style="color: #FFE58F; font-size: 12px; font-weight: 700; margin: 2px 0 0;">Dominó Tradicional en Lengua Inga · Aprendizaje Interactivo</p>
+                <p class="domino-header-sub">Dominó Tradicional en Lengua Inga · Aprendizaje Interactivo</p>
               </div>
             </div>
 
             <!-- Píldoras de estado y progreso en tiempo real -->
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <div class="domino-header-stats-controls">
               <div id="levelBadge" class="badge-pill" style="background: rgba(255,255,255,0.18); color:#FFF; font-size:12px; padding:6px 12px; cursor:pointer;" onclick="openModal('levelsModal')" title="Clic para cambiar de nivel">
                 🏆 <span id="currentLevelName">Nivel 1 · Shuk - Baraja Oficial Inga (28 Fichas)</span>
               </div>
@@ -1008,7 +1008,7 @@
           </div>
 
           <!-- Pestañas de Navegación del Juego (Pill Buttons de Alta Visibilidad) -->
-          <div style="display: flex; gap: 10px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 6px; align-items: center;">
+          <div class="game-nav-tabs-bar">
             <button class="nav-tab nav-tab-game active" style="background: linear-gradient(135deg, #16A34A 0%, #15803D 100%); color: #FFFFFF;" onclick="openModal('game')">🎮 Mesa de Juego</button>
             <button id="toggleModesHubBtn" class="nav-tab nav-tab-modes" style="background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: #FFFFFF;" onclick="toggleGameModesHub()">🗂️ Ver Modalidades</button>
             <button class="nav-tab nav-tab-levels" style="background: linear-gradient(135deg, #D97706 0%, #B45309 100%); color: #FFFFFF;" onclick="openModal('levelsModal')">🏆 Niveles (1 al 6)</button>

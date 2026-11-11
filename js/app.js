@@ -1108,16 +1108,21 @@ function autoAdjustBoardScale() {
     return;
   }
 
-  // POLÍTICA DE ALTA VISIBILIDAD: escala mínima protegida (>= 0.84 desktop, 0.80 móvil)
+  // POLÍTICA DE ADAPTACIÓN A TODAS LAS PANTALLAS:
+  // En pantallas grandes o tablets, escala espaciosa.
+  // En móviles, escala optimizada que protege la legibilidad y previene desbordes.
+  const isMobile = window.innerWidth < 640;
+  const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+
   let scale = 1.0;
   if (chain.length <= 4) {
     scale = 1.0;
   } else if (chain.length <= 7) {
-    scale = 0.94;
+    scale = isMobile ? 0.94 : 0.98;
   } else if (chain.length <= 11) {
-    scale = 0.88;
+    scale = isMobile ? 0.88 : 0.92;
   } else {
-    scale = window.innerWidth < 640 ? 0.80 : 0.84;
+    scale = isMobile ? 0.82 : (isTablet ? 0.85 : 0.88);
   }
 
   chainEl.style.transform = `scale(${scale})`;

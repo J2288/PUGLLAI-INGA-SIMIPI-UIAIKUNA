@@ -2156,45 +2156,128 @@ button, .button, .tile, .topbar-btn, .nav-tab, .mode-card-btn {
   to { opacity: 1; transform: scale(1); }
 }
 
+/* --------------------------------------------------------------------------
+   BARRA SUPERIOR DEL JUEGO Y PESTAÑAS RESPONSIVAS
+   -------------------------------------------------------------------------- */
+.domino-header-bar {
+  background: linear-gradient(135deg, #7A1F3D 0%, #4A0E21 100%);
+  border-radius: 16px;
+  padding: 12px 18px;
+  border-bottom: 4px solid #FFC629;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.domino-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.domino-header-logo {
+  font-size: 26px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 9px;
+  border-radius: 12px;
+  border: 2px solid #FFC629;
+  line-height: 1;
+}
+
+.domino-header-title {
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.domino-header-sub {
+  color: #FFE58F;
+  font-size: 11.5px;
+  font-weight: 700;
+  margin: 2px 0 0;
+}
+
+.domino-header-stats-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.game-nav-tabs-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  align-items: center;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 198, 41, 0.4) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.game-nav-tabs-bar .nav-tab {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 /* ==========================================================================
-   BREAKPOINTS: LAPTOPS, TABLETS Y CELULARES
+   SISTEMA RESPONSIVO TOTAL (ADAPTACIÓN A TODAS LAS PANTALLAS)
    ========================================================================== */
 
-/* 1. TABLET LANDSCAPE & LAPTOPS PEQUEÑAS (1024px a 1280px) */
-@media (max-width: 1280px) {
+/* 1. LAPTOPS MEDIANAS Y PANTALLAS HASTA 1200px */
+@media (max-width: 1200px) {
   .domino-game-grid {
-    grid-template-columns: minmax(0, 1fr) 280px;
+    grid-template-columns: 1fr !important;
     gap: 14px;
   }
+  .study-card-wrapper {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px;
+    margin-top: 10px;
+  }
   :root {
-    --tile-w: 138px;
+    --tile-w: 140px;
     --tile-h: 68px;
   }
 }
 
-/* 2. TABLET PORTRAIT (768px a 1024px) */
-@media (max-width: 1024px) {
-  .domino-game-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+/* 2. TABLETS PORTRAIT Y NOTEBOOKS COMPACTAS (768px a 991px) */
+@media (max-width: 991px) {
+  .domino-header-bar {
+    padding: 10px 14px;
+    gap: 8px;
   }
-  .study-card-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
+  .domino-header-title {
+    font-size: 14.5px;
   }
-  .mobile-menu-btn {
-    display: inline-flex;
+  .domino-header-sub {
+    font-size: 10.5px;
+  }
+  .domino-header-stats-controls {
+    width: 100%;
+    justify-content: space-between;
   }
   :root {
-    --tile-w: 126px;
-    --tile-h: 62px;
-    --felt-min-height: 350px;
-    --chain-min-height: 160px;
+    --tile-w: 124px;
+    --tile-h: 60px;
+    --felt-min-height: 330px;
+    --chain-min-height: 150px;
+  }
+  .study-card-wrapper {
+    grid-template-columns: 1fr 1fr !important;
   }
 }
 
-/* 3. CELULARES (Android y iPhone: <= 767px) */
+/* 3. CELULARES ESTÁNDAR Y GRANDES (481px a 767px) */
 @media (max-width: 767px) {
   .mobile-menu-btn {
     display: inline-flex;
@@ -2203,46 +2286,109 @@ button, .button, .tile, .topbar-btn, .nav-tab, .mode-card-btn {
     display: block;
   }
 
-  /* Ajustes generales del layout */
-  .domino-game-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .domino-header-bar {
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+    margin-bottom: 10px !important;
+  }
+  .domino-header-brand {
+    gap: 8px !important;
+  }
+  .domino-header-logo {
+    font-size: 20px !important;
+    padding: 2px 6px !important;
+  }
+  .domino-header-title {
+    font-size: 13px !important;
+  }
+  .domino-header-sub {
+    display: none !important;
+  }
+  .domino-header-stats-controls {
+    width: 100% !important;
+    gap: 5px !important;
+    justify-content: flex-start !important;
+  }
+  .domino-header-stats-controls .badge-pill {
+    font-size: 10.5px !important;
+    padding: 4px 8px !important;
+  }
+  .domino-header-stats-controls .topbar-btn {
+    padding: 4px 7px !important;
+    font-size: 11.5px !important;
   }
 
-  .table-ends-banner {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 8px 10px;
+  .game-nav-tabs-bar {
+    gap: 6px !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 4px !important;
   }
-  .end-card-center {
-    grid-column: 1 / -1;
-    max-width: 100%;
-    order: 3;
-    margin-top: 4px;
-    padding-top: 6px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  .game-nav-tabs-bar .nav-tab {
+    padding: 5px 9px !important;
+    font-size: 11.5px !important;
+  }
+
+  /* Banner de Extremos HUD en celular */
+  .table-ends-banner {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+    padding: 6px 8px !important;
+    margin-bottom: 8px !important;
+    border-radius: 10px !important;
   }
   .end-card {
-    padding: 6px 8px;
+    padding: 5px 8px !important;
+  }
+  .end-card-header {
+    font-size: 8.5px !important;
+    margin-bottom: 2px !important;
   }
   .end-card-icon {
-    font-size: 1.35rem;
+    font-size: 1.25rem !important;
   }
   .end-card-inga {
-    font-size: 11.5px;
+    font-size: 11.5px !important;
   }
   .end-card-meta {
-    font-size: 10px;
+    font-size: 9.5px !important;
+    gap: 4px !important;
+  }
+  .end-card-val {
+    font-size: 8.5px !important;
+    padding: 0 4px !important;
+  }
+  .end-card-center {
+    grid-column: 1 / -1 !important;
+    max-width: 100% !important;
+    order: 3 !important;
+    margin-top: 3px !important;
+    padding-top: 4px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  .end-guide-badge {
+    font-size: 8.5px !important;
+  }
+  .end-guide-msg {
+    font-size: 10.5px !important;
+    line-height: 1.25 !important;
+    margin-bottom: 4px !important;
+  }
+  .end-nav-actions {
+    gap: 4px !important;
+  }
+  .end-nav-btn {
+    padding: 2px 7px !important;
+    font-size: 10px !important;
   }
 
   /* Dimensiones responsivas de fichas para pantallas de celular */
   :root {
-    --tile-w: clamp(100px, 28vw, 122px);
-    --tile-h: clamp(50px, 14vw, 61px);
-    --felt-min-height: clamp(260px, 46vh, 330px);
-    --chain-min-height: 130px;
-    --tile-font-concept: clamp(0.66rem, 2vw, 0.76rem);
-    --tile-font-trans: clamp(0.48rem, 1.4vw, 0.56rem);
+    --tile-w: clamp(98px, 28vw, 116px);
+    --tile-h: clamp(49px, 14vw, 58px);
+    --felt-min-height: clamp(260px, 44vh, 320px);
+    --chain-min-height: 125px;
+    --tile-font-concept: clamp(0.58rem, 1.8vw, 0.68rem);
+    --tile-font-trans: clamp(0.44rem, 1.3vw, 0.52rem);
   }
 
   .tile.horizontal {
@@ -2257,182 +2403,210 @@ button, .button, .tile, .topbar-btn, .nav-tab, .mode-card-btn {
     font-size: var(--tile-font-concept) !important;
   }
   .tile .concept.concept-sugratukama {
-    font-size: clamp(0.42rem, 1.4vw, 0.48rem) !important;
+    font-size: clamp(0.40rem, 1.3vw, 0.46rem) !important;
   }
   .tile .concept.concept-mamasinura {
-    font-size: clamp(0.44rem, 1.5vw, 0.50rem) !important;
+    font-size: clamp(0.42rem, 1.4vw, 0.48rem) !important;
   }
   .tile .concept.concept-multiline {
-    font-size: clamp(0.54rem, 1.8vw, 0.60rem) !important;
+    font-size: clamp(0.50rem, 1.6vw, 0.56rem) !important;
   }
   .tile .translation {
     font-size: var(--tile-font-trans) !important;
   }
   .tile .concept-icon {
-    font-size: clamp(0.95rem, 2.6vw, 1.1rem) !important;
+    font-size: clamp(0.85rem, 2.4vw, 1.05rem) !important;
   }
   .domino-pin {
-    width: 7px !important;
-    height: 7px !important;
+    width: 6px !important;
+    height: 6px !important;
   }
   .domino-pip-tag {
-    width: 13px !important;
-    height: 13px !important;
-    font-size: 8px !important;
+    width: 12px !important;
+    height: 12px !important;
+    font-size: 7.5px !important;
   }
 
-  /* Tapete de mesa en celular: máximo aprovechamiento */
+  /* Tapete de mesa en celular */
   .domino-table-wrapper {
-    padding: 8px 6px !important;
-    border-radius: 14px !important;
-    border-width: 2px !important;
+    padding: 6px 4px !important;
+    border-radius: 12px !important;
   }
   .domino-felt {
     min-height: var(--felt-min-height) !important;
-    padding: 10px 6px !important;
-    border-radius: 12px !important;
+    padding: 8px 6px !important;
+    border-radius: 10px !important;
   }
 
-  /* Oponente en celular: diseño compacto */
+  /* Oponente en celular */
   .opponent-bar {
-    padding: 4px 10px !important;
-    font-size: 0.78rem !important;
+    padding: 3px 8px !important;
+    font-size: 0.74rem !important;
+    margin-bottom: 6px !important;
   }
   .opponent-avatar {
-    font-size: 1.1rem !important;
+    font-size: 1rem !important;
     padding: 1px 4px !important;
   }
   .tile-face-down {
-    width: 20px !important;
-    height: 34px !important;
+    width: 18px !important;
+    height: 30px !important;
   }
 
-  /* Cadena central en celular: scroll táctil fluido */
+  /* Cadena central en celular */
   .chain-scroll-container {
     min-height: var(--chain-min-height) !important;
-    padding: 12px 6px !important;
+    padding: 10px 8px !important;
     -webkit-overflow-scrolling: touch;
   }
   .drop-target-btn {
-    min-width: 76px !important;
-    height: 52px !important;
+    min-width: 80px !important;
+    height: 54px !important;
     padding: 6px 8px !important;
   }
   .drop-target-btn span {
-    font-size: 0.65rem !important;
+    font-size: 0.62rem !important;
   }
   .drop-target-btn strong {
-    font-size: 0.80rem !important;
+    font-size: 0.78rem !important;
   }
 
-  /* Atril del jugador en celular: ergonómico y táctil */
+  /* Atril del jugador en celular */
   .player-rack-container {
-    padding: 10px 10px 12px !important;
-    border-radius: 14px !important;
+    padding: 8px 8px 10px !important;
+    border-radius: 12px !important;
   }
   .rack-header h3 {
-    font-size: 0.95rem !important;
+    font-size: 0.88rem !important;
   }
   .rack-slot {
-    padding: 8px 6px !important;
-    min-height: 74px !important;
-    gap: 8px !important;
-    justify-content: center !important;
+    padding: 6px 4px !important;
+    min-height: 66px !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+  #hand {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
 
-  /* Barra de controles en celular: botones grandes para pulgar */
+  /* Barra de controles en celular */
   .game-controls-bar {
-    padding: 10px 12px !important;
-    border-radius: 12px !important;
+    padding: 8px 10px !important;
+    border-radius: 10px !important;
     flex-direction: column !important;
-    gap: 10px !important;
+    gap: 8px !important;
   }
   .game-controls-actions {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 8px !important;
+    gap: 6px !important;
     width: 100% !important;
   }
   .game-controls-actions button, .game-controls-actions .button {
     width: 100% !important;
     justify-content: center !important;
-    padding: 10px 8px !important;
-    font-size: 0.82rem !important;
+    padding: 8px 6px !important;
+    font-size: 0.78rem !important;
   }
 
-  /* Tarjeta de estudio en celular: debajo del juego */
+  /* Tarjeta de estudio en celular */
   .study-card-wrapper {
     display: block !important;
-    margin-top: 10px;
-  }
-  .word {
-    font-size: 1.8rem !important;
-  }
-  .translation-large {
-    font-size: 1rem !important;
-  }
-
-  /* Pestañas de navegación superiores en celular */
-  .nav-bar {
-    padding: 6px 8px !important;
-    gap: 6px !important;
-  }
-  .nav-tab {
-    padding: 6px 10px !important;
-    font-size: 0.78rem !important;
+    margin-top: 10px !important;
   }
 }
 
-/* 4. CELULARES PEQUEÑOS (<= 390px: iPhone SE, Galaxy S21) */
+/* 4. CELULARES PEQUEÑOS (<= 390px: iPhone SE, Galaxy S21 mini) */
 @media (max-width: 390px) {
   :root {
-    --tile-w: clamp(88px, 25vw, 100px);
-    --tile-h: clamp(44px, 12.5vw, 50px);
-    --tile-font-concept: 0.62rem;
-    --tile-font-trans: 0.46rem;
+    --tile-w: clamp(86px, 25vw, 98px);
+    --tile-h: clamp(43px, 12.5vw, 49px);
+    --tile-font-concept: 0.54rem;
+    --tile-font-trans: 0.40rem;
+    --tile-icon-size: 0.78rem;
   }
   .tile .concept.concept-sugratukama {
-    font-size: 0.38rem !important;
+    font-size: 0.36rem !important;
   }
   .tile .concept.concept-mamasinura {
-    font-size: 0.40rem !important;
+    font-size: 0.38rem !important;
   }
   .tile .concept.concept-multiline {
-    font-size: 0.48rem !important;
+    font-size: 0.44rem !important;
   }
   .tile .concept-icon {
-    font-size: 0.85rem !important;
+    font-size: 0.78rem !important;
   }
   .domino-pip-tag {
-    width: 11px !important;
-    height: 11px !important;
-    font-size: 7px !important;
+    width: 10px !important;
+    height: 10px !important;
+    font-size: 6.5px !important;
   }
   .game-controls-actions {
     grid-template-columns: 1fr !important;
   }
 }
 
-/* 5. MODO HORIZONTAL EN CELULAR (Landscape: altura reducida <= 500px) */
-@media (max-height: 500px) and (orientation: landscape) {
-  .saas-topbar {
+/* 5. MODO HORIZONTAL EN CELULAR (Landscape: altura reducida <= 520px) */
+@media (max-height: 520px) and (orientation: landscape) {
+  .saas-topbar, .domino-header-bar, .game-nav-tabs-bar {
     display: none !important;
   }
+  .saas-content {
+    padding: 4px 6px !important;
+  }
+  .domino-table-wrapper {
+    padding: 4px !important;
+  }
   .domino-felt {
-    min-height: 220px !important;
+    min-height: 200px !important;
+    padding: 4px 6px !important;
+  }
+  .opponent-bar {
+    padding: 2px 8px !important;
+    margin-bottom: 4px !important;
+  }
+  .table-ends-banner {
+    padding: 3px 6px !important;
+    margin-bottom: 4px !important;
+    gap: 4px !important;
   }
   .chain-scroll-container {
-    min-height: 110px !important;
+    min-height: 85px !important;
+    padding: 4px 6px !important;
+  }
+  .player-rack-container {
+    padding: 4px 6px !important;
+  }
+  .rack-slot {
+    min-height: 48px !important;
+    padding: 3px !important;
+  }
+  .game-controls-bar {
+    padding: 4px 8px !important;
+    flex-direction: row !important;
+  }
+  .game-controls-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+  .game-controls-actions .button {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
   }
   :root {
-    --tile-w: 102px;
-    --tile-h: 51px;
-    --tile-font-concept: 0.64rem;
-    --tile-font-trans: 0.48rem;
+    --tile-w: 92px !important;
+    --tile-h: 46px !important;
+    --tile-font-concept: 0.54rem !important;
+    --tile-font-trans: 0.40rem !important;
+    --tile-icon-size: 0.78rem !important;
   }
   .tile .concept-icon {
-    font-size: 0.90rem !important;
+    font-size: 0.78rem !important;
   }
 }
